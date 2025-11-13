@@ -7,6 +7,7 @@ These resources are to be applied first, before any infrastructure or applicatio
 - Custom Resource Definitions (CRDs), to be added later when needed
 
 ## Apply Order
+Not super relevent yet as I only have namespaces
 ```bash
 kubectl apply -f bootstrap/namespaces/
 ```

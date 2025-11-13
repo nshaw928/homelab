@@ -1,1 +1,22 @@
+# Personal Reference Documents
 linkding_comments.yaml
+/reference
+
+# Secrets and sensitive data
+*.key
+*.pem
+secrets/
+.env
+
+# Temporary files
+*.tmp
+*.bak
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+*.swp
