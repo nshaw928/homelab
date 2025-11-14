@@ -1,5 +1,4 @@
 # Let's Encrypt Staging ClusterIssuer
-# Use for testing
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
@@ -7,17 +6,18 @@ metadata:
 spec:
   acme:
     server: https://acme-staging-v02.api.letsencrypt.org/directory
-    email: nick@nicholasshaw.email  # ← CHANGE THIS
+    email: nick@nicholasshaw.email
     privateKeySecretRef:
       name: letsencrypt-staging
     solvers:
-    - http01:
-        ingress:
-          class: traefik
+    - dns01:
+        cloudflare:
+          apiTokenSecretRef:
+            name: cloudflare-api-token
+            key: api-token
 
 ---
 # Let's Encrypt Production ClusterIssuer
-# Use for production (limit on # per week)
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
@@ -25,10 +25,12 @@ metadata:
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: nick@nicholasshaw.email  # ← CHANGE THIS
+    email: nick@nicholasshaw.email
     privateKeySecretRef:
       name: letsencrypt-prod
     solvers:
-    - http01:
-        ingress:
-          class: traefik
+    - dns01:
+        cloudflare:
+          apiTokenSecretRef:
+            name: cloudflare-api-token
+            key: api-token
