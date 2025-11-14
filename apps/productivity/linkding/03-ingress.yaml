@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: linkding
+  namespace: linkding
+  labels:
+    app: linkding
+  annotations:
+    # cert-manager automatically creates and manages the SSL certificate
+    cert-manager.io/cluster-issuer: letsencrypt-staging
+    # Once staging works, switch to production:
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+    
+    # Traefik-specific annotations
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    # Redirect HTTP to HTTPS
+    traefik.ingress.kubernetes.io/redirect-to-https: "true"
+spec:
+
+  # TLS configuration
+  tls:
+  - hosts:
+    - linkding.nicholasshaw.cloud
+    secretName: linkding-tls  # cert-manager creates this automatically
+  
+  # Routing rules
+  rules:
+  - host: linkding.nicholasshaw.cloud
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: linkding
+            port:
+              number: 9090
