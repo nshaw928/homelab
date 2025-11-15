@@ -6,6 +6,7 @@
 *.pem
 secrets/
 .env
+homelab-ca.crt
 
 # Temporary files
 *.tmp
