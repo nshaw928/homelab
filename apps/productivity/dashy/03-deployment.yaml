@@ -41,7 +41,13 @@ spec:
         volumeMounts:
         - name: config
           mountPath: /app/user-data
+        - name: dashy-config
+          mountPath: /app/user-data/conf.yml
+          subPath conf.yml
       volumes:
       - name: config
         persistentVolumeClaim:
           claimName: dashy-pvc
+      - name: dashy-config
+        configMap:
+          name: dashy-config
