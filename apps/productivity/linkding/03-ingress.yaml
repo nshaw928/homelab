@@ -5,7 +5,14 @@ metadata:
   namespace: linkding
   labels:
     app: linkding
+  annotations:
+    cert-manager.io/cluster-issuer: homelab-ca-issuer
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
 spec:
+  tls:
+  - hosts:
+    - linkding.nicholasshaw.cloud
+    secretName: linkding-tls
   rules:
   - host: linkding.nicholasshaw.cloud
     http:
