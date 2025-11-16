@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dashy-config
+  namespace: dashy
+data:
+  conf.yml: |
+    ---
+    pageInfo:
+      title: Homelab Dashboard
+      description: Welcome to your homelab!
+      navLinks:
+        - title: GitHub
+          path: https://github.com/nshaw928
+
+    appConfig:
+      theme: colorful
+      layout: auto
+      iconSize: medium
+      language: en
+
+    sections:
+      - name: Getting Started
+        icon: fas fa-rocket
+        items:
+          - title: Dashy
+            description: Dashboard application
+            icon: hl-dashy
+            url: https://dashy.nicholasshaw.cloud
+          - title: Linkding
+            description: Bookmark manager
+            icon: hl-linkding
+            url: https://linkding.nicholasshaw.cloud
