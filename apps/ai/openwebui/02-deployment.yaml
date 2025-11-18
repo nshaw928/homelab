@@ -24,10 +24,10 @@ spec:
   selector:
     matchLabels:
       app: openwebui
-    template:
-      metadata:
-        labels:
-          app: openwebui
+  template:
+    metadata:
+      labels:
+        app: openwebui
       spec:
         containers:
         - name: openwebui
