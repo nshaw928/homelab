@@ -28,31 +28,31 @@ spec:
     metadata:
       labels:
         app: openwebui
-      spec:
-        containers:
-        - name: openwebui
-          image: ghcr.io/open-webui/open-webui:v0.6.36
-          ports:
-          - containerPort: 8080
-            protocol: TCP
-          env:
-          - name: OLLAMA_BASE_URL
-            value: "http://ollama.ollama.svc.cluster.local:11434"
-          - name: WEBUI_SECRET_KEY
-            value: "your-secret-key-change-this"
-          - name: DATA_DIR
-            value: "/app/backend/data"
-          volumeMounts:
-          - name: data
-            mountPath: /app/backend/data
-          resources:
-            requests:
-              memory: "512Mi"
-              cpu: "250m"
-            limits:
-              memory: "2Gi"
-              cpu: "1000m"
-        volumes:
+    spec:
+      containers:
+      - name: openwebui
+        image: ghcr.io/open-webui/open-webui:v0.6.36
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        env:
+        - name: OLLAMA_BASE_URL
+          value: "http://ollama.ollama.svc.cluster.local:11434"
+        - name: WEBUI_SECRET_KEY
+          value: "your-secret-key-change-this"
+        - name: DATA_DIR
+          value: "/app/backend/data"
+        volumeMounts:
         - name: data
-          persistentVolumeClaim:
-            claimName: open-webui-data
+          mountPath: /app/backend/data
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: open-webui-data
