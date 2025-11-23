@@ -1,8 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: openwebui
-  labels:
-    name: openwebio
-    app.kubernetes.io/part-of: applications
-    category: ai
