@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argocd-server
+  namespace: argocd
+  labels:
+    app: argocd-server
+  annotations:
+    cert-manager.io/cluster-issuer: homelab-ca-issuer
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+spec:
+  tls:
+  - hosts:
+    - argocd.nicholasshaw.cloud
+    secretName: argocd-tls
+  rules:
+  - host: argocd.nicholasshaw.cloud
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: argocd-server
+            port:
+              number: 443
