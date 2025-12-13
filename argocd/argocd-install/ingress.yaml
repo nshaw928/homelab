@@ -8,8 +8,6 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: homelab-ca-issuer
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
 spec:
   tls:
   - hosts:
