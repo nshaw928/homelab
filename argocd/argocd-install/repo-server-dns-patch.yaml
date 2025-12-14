@@ -10,5 +10,11 @@ spec:
       dnsConfig:
         nameservers:
           - 10.43.0.10
+        searches:
+          - argocd.svc.cluster.local
+          - svc.cluster.local
+          - cluster.local
         options:
+          - name: ndots
+            value: "5"
           - name: single-request-reopen
