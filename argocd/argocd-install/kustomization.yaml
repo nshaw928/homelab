@@ -6,3 +6,6 @@ namespace: argocd
 resources:
   - https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
   - ingress.yaml
+
+patchesStrategicMerge:
+  - repo-server-dns-patch.yaml
