@@ -1,0 +1,52 @@
+---
+- name: Configure Traefik TLS on master node
+  hosts: k3s_master
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Ensure manifests directory exists
+      file:
+        path: /var/lib/rancher/k3s/server/manifests
+        state: directory
+        mode: '0755'
+
+    - name: Deploy Traefik HelmChartConfig for HTTPS redirect
+      copy:
+        src: "{{ playbook_dir }}/../../infrastructure/traefik/traefik-config.yaml"
+        dest: /var/lib/rancher/k3s/server/manifests/traefik-config.yaml
+        mode: '0644'
+
+- name: Apply Traefik TLSStore and update ingresses
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Wait for wildcard TLS secret to exist in kube-system
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Secret
+        namespace: kube-system
+        name: nicholasshaw-cloud-wildcard-tls
+      register: secret_check
+      until: secret_check.resources | length > 0
+      retries: 30
+      delay: 10
+      ignore_errors: true
+
+    - name: Apply Traefik TLSStore
+      kubernetes.core.k8s:
+        state: present
+        src: "{{ playbook_dir }}/../../infrastructure/traefik/default-tls.yaml"
+
+    - name: Update ArgoCD ingress
+      kubernetes.core.k8s:
+        state: present
+        src: "{{ playbook_dir }}/../../infrastructure/argocd/argocd-ingress.yaml"
+
+    - name: Show TLS configuration status
+      debug:
+        msg: >
+          TLSStore applied. If the wildcard secret was not found in kube-system,
+          ensure Reflector is running and has synced the secret from cert-manager namespace.

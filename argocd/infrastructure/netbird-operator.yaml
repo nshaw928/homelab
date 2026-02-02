@@ -1,0 +1,34 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: netbird-operator
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/compare-options: ServerSideDiff=true
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://netbirdio.github.io/helms
+    chart: kubernetes-operator
+    targetRevision: 0.2.0
+    helm:
+      values: |
+        managementURL: https://netbird.nicholasshaw.cloud
+        netbirdAPI:
+          keyFromSecret:
+            name: netbird-api-token
+            key: NB_API_KEY
+        ingress:
+          enabled: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: netbird
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

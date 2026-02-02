@@ -1,0 +1,47 @@
+---
+- name: Configure Netbird Operator secrets
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars_prompt:
+    - name: netbird_api_token
+      prompt: "Enter Netbird Personal Access Token (with admin permissions)"
+      private: yes
+
+  tasks:
+    - name: Create netbird namespace
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: netbird
+
+    - name: Create Netbird API token secret
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: netbird-api-token
+            namespace: netbird
+          type: Opaque
+          stringData:
+            NB_API_KEY: "{{ netbird_api_token }}"
+
+    - name: Show next steps
+      debug:
+        msg: |
+          Netbird API token secret created.
+
+          Next steps:
+          1. Push netbird-operator.yaml to Git:
+             git add argocd/infrastructure/netbird-operator.yaml
+             git commit -m "add netbird operator ArgoCD app"
+             git push origin main
+
+          2. Wait for ArgoCD to sync the operator
+
+          3. Run netbird-client.yml to install the client on K3s nodes

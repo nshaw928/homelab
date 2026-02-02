@@ -1,0 +1,93 @@
+---
+- name: Configure cert-manager with Cloudflare DNS-01
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars_prompt:
+    - name: cloudflare_api_token
+      prompt: "Enter Cloudflare API Token (Zone:DNS:Edit, Zone:Zone:Read permissions)"
+      private: yes
+    - name: letsencrypt_email
+      prompt: "Enter email for Let's Encrypt notifications"
+      private: no
+
+  tasks:
+    - name: Wait for cert-manager namespace to exist
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Namespace
+        name: cert-manager
+      register: ns_check
+      until: ns_check.resources | length > 0
+      retries: 30
+      delay: 10
+
+    - name: Wait for cert-manager pods to be ready
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Pod
+        namespace: cert-manager
+        label_selectors:
+          - app.kubernetes.io/instance=cert-manager
+      register: pod_check
+      until: >
+        pod_check.resources | length > 0 and
+        (pod_check.resources | selectattr('status.phase', 'equalto', 'Running') | list | length) == (pod_check.resources | length)
+      retries: 30
+      delay: 10
+
+    - name: Create Cloudflare API token secret
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Secret
+          metadata:
+            name: cloudflare-api-token
+            namespace: cert-manager
+          type: Opaque
+          stringData:
+            api-token: "{{ cloudflare_api_token }}"
+
+    - name: Read ClusterIssuer staging template
+      set_fact:
+        staging_issuer: "{{ lookup('file', playbook_dir + '/../../infrastructure/cert-manager/clusterissuer-staging.yaml') | from_yaml }}"
+
+    - name: Apply ClusterIssuer (staging) with email
+      kubernetes.core.k8s:
+        state: present
+        definition: "{{ staging_issuer | combine({'spec': {'acme': {'email': letsencrypt_email}}}, recursive=True) }}"
+
+    - name: Read ClusterIssuer production template
+      set_fact:
+        production_issuer: "{{ lookup('file', playbook_dir + '/../../infrastructure/cert-manager/clusterissuer-production.yaml') | from_yaml }}"
+
+    - name: Apply ClusterIssuer (production) with email
+      kubernetes.core.k8s:
+        state: present
+        definition: "{{ production_issuer | combine({'spec': {'acme': {'email': letsencrypt_email}}}, recursive=True) }}"
+
+    - name: Apply wildcard Certificate
+      kubernetes.core.k8s:
+        state: present
+        src: "{{ playbook_dir }}/../../infrastructure/cert-manager/wildcard-certificate.yaml"
+
+    - name: Wait for certificate to be issued
+      kubernetes.core.k8s_info:
+        api_version: cert-manager.io/v1
+        kind: Certificate
+        namespace: cert-manager
+        name: nicholasshaw-cloud-wildcard
+      register: cert_status
+      until: >
+        cert_status.resources | length > 0 and
+        cert_status.resources[0].status.conditions is defined and
+        (cert_status.resources[0].status.conditions | selectattr('type', 'equalto', 'Ready') | selectattr('status', 'equalto', 'True') | list | length > 0)
+      retries: 60
+      delay: 10
+      ignore_errors: true
+
+    - name: Show certificate status
+      debug:
+        msg: "Certificate status: {{ cert_status.resources[0].status.conditions | default('Pending...') }}"
+      when: cert_status.resources | length > 0

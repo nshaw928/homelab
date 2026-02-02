@@ -1,0 +1,44 @@
+---
+- name: Install Netbird client on K3s nodes
+  hosts: k3s_cluster
+  become: true
+  gather_facts: true
+  vars_prompt:
+    - name: netbird_management_url
+      prompt: "Enter Netbird management URL (e.g., https://netbird.nicholasshaw.cloud)"
+      private: no
+    - name: netbird_setup_key
+      prompt: "Enter Netbird setup key"
+      private: yes
+
+  tasks:
+    - name: Check if Netbird is already installed
+      stat:
+        path: /usr/bin/netbird
+      register: netbird_installed
+
+    - name: Install Netbird
+      shell: curl -fsSL https://pkgs.netbird.io/install.sh | sh
+      when: not netbird_installed.stat.exists
+
+    - name: Check Netbird status
+      command: netbird status
+      register: netbird_status
+      ignore_errors: true
+      changed_when: false
+
+    - name: Connect to Netbird
+      command: >
+        netbird up
+        --management-url {{ netbird_management_url }}
+        --setup-key {{ netbird_setup_key }}
+      when: "'Connected' not in netbird_status.stdout"
+
+    - name: Verify Netbird connection
+      command: netbird status
+      register: final_status
+      changed_when: false
+
+    - name: Show Netbird status
+      debug:
+        msg: "{{ final_status.stdout_lines }}"

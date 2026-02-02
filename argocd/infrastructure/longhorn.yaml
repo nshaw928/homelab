@@ -24,10 +24,12 @@ spec:
           defaultClassReplicaCount: 2
         ingress:
           enabled: true
-          host: longhorn.homelab.local
+          host: longhorn.nicholasshaw.cloud
           ingressClassName: traefik
+          tls: true
           annotations:
-            traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+            traefik.ingress.kubernetes.io/router.entrypoints: websecure
+            traefik.ingress.kubernetes.io/router.tls: "true"
   destination:
     server: https://kubernetes.default.svc
     namespace: longhorn-system
