@@ -17,6 +17,10 @@ spec:
       values: |
         crds:
           enabled: true
+        # Use DNS-over-HTTPS since UDP 53 is blocked on the network
+        extraArgs:
+          - --dns01-recursive-nameservers-only
+          - --dns01-recursive-nameservers=https://1.1.1.1/dns-query
   destination:
     server: https://kubernetes.default.svc
     namespace: cert-manager
