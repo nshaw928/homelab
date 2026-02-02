@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: dns-forwarder
+  namespace: kube-system
+  labels:
+    app: dns-forwarder
+spec:
+  selector:
+    matchLabels:
+      app: dns-forwarder
+  template:
+    metadata:
+      labels:
+        app: dns-forwarder
+    spec:
+      hostNetwork: true
+      dnsPolicy: Default
+      tolerations:
+      - operator: Exists
+      containers:
+      - name: coredns
+        image: rancher/mirrored-coredns-coredns:1.13.1
+        args: ["-conf", "/etc/coredns/Corefile"]
+        ports:
+        - containerPort: 5353
+          hostPort: 5353
+          protocol: UDP
+        volumeMounts:
+        - name: config
+          mountPath: /etc/coredns
+      volumes:
+      - name: config
+        configMap:
+          name: dns-forwarder-config
