@@ -12,7 +12,8 @@ spec:
     chart: longhorn
     targetRevision: 1.11.0
     helm:
-      values: |
+      skipCrds: false
+      values:
         defaultSettings:
           defaultReplicaCount: 2
           createDefaultDiskLabeledNodes: true
