@@ -1,0 +1,6 @@
+# Secrets - never commit
+ansible/inventory/hosts.yml
+ansible/kubeconfig.yaml
+
+# Optional
+tutorials/

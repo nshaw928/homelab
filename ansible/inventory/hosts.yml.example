@@ -1,0 +1,31 @@
+# Example Ansible inventory file
+# Copy this to hosts.yml and fill in your values
+all:
+  children:
+    # Control plane nodes (masters)
+    k3s_masters:
+      hosts:
+        master-01:
+          ansible_host: 10.x.x.x
+          ansible_become_password: "YOUR_PASSWORD_HERE"
+
+    # Worker nodes
+    k3s_workers:
+      hosts:
+        worker-01:
+          ansible_host: 10.x.x.x
+          ansible_become_password: "YOUR_PASSWORD_HERE"
+        worker-02:
+          ansible_host: 10.x.x.x
+          ansible_become_password: "YOUR_PASSWORD_HERE"
+
+    # All K3s nodes
+    k3s_cluster:
+      children:
+        k3s_masters:
+        k3s_workers:
+
+  vars:
+    # Variables applied to all hosts
+    ansible_user: your_username
+    ansible_python_interpreter: /usr/bin/python3

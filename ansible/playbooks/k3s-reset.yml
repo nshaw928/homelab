@@ -1,0 +1,43 @@
+- name: Uninstall K3s from all nodes
+  hosts: k3s_cluster
+  become: yes
+  tasks:
+    - name: Check if k3s-uninstall script exists (server)
+      stat:
+        path: /usr/local/bin/k3s-uninstall.sh
+      register: k3s_server_uninstall
+
+    - name: Uninstall K3s server
+      command: /usr/local/bin/k3s-uninstall.sh
+      when: k3s_server_uninstall.stat.exists
+
+    - name: Check if k3s-agent-uninstall script exists
+      stat:
+        path: /usr/local/bin/k3s-agent-uninstall.sh
+      register: k3s_agent_uninstall
+
+    - name: Uninstall K3s agent
+      command: /usr/local/bin/k3s-agent-uninstall.sh
+      when: k3s_agent_uninstall.stat.exists
+
+    - name: Remove K3s data directories
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /var/lib/rancher
+        - /etc/rancher
+
+    - name: Remove k8s kernel modules config
+      file:
+        path: /etc/modules-load.d/k8s.conf
+        state: absent
+
+    - name: Remove k8s sysctl config
+      file:
+        path: /etc/sysctl.d/k8s.conf
+        state: absent
+
+    - name: Reload sysctl to apply changes
+      command: sysctl --system
+      changed_when: true

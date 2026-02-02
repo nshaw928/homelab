@@ -1,0 +1,142 @@
+- name: Prepare all nodes
+  hosts: k3s_cluster
+  become: true
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install required packages
+      apt:
+        name:
+          - curl
+          - apt-transport-https
+          - ca-certificates
+        state: present
+
+    - name: Disable swap (Kubernetes requirement)
+      command: swapoff -a
+      when: ansible_facts['swaptotal_mb'] > 0
+      changed_when: true
+
+    - name: Remove swap from fstab
+      lineinfile:
+        path: /etc/fstab
+        regexp: '^.*swap.*$'
+        state: absent
+
+    - name: Load required kernel modules
+      community.general.modprobe:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - br_netfilter
+        - overlay
+
+    - name: Ensure modules load on boot
+      copy:
+        dest: /etc/modules-load.d/k8s.conf
+        content: |
+          br_netfilter
+          overlay
+
+    - name: Configure sysctl parameters for Kubernetes
+      copy:
+        dest: /etc/sysctl.d/k8s.conf
+        content: |
+          net.bridge.bridge-nf-call-iptables = 1
+          net.bridge.bridge-nf-call-ip6tables = 1
+          net.ipv4.ip_forward = 1
+      notify: Reload sysctl
+
+  handlers:
+    - name: Reload sysctl
+      command: sysctl --system
+      changed_when: true
+
+- name: Install K3s on master node
+  hosts: k3s_masters
+  become: true
+  vars:
+    k3s_version: "v1.35.0+k3s1"
+  tasks:
+    - name: Download K3s install script
+      get_url:
+        url: https://get.k3s.io
+        dest: /tmp/k3s-install.sh
+        mode: '0755'
+
+    - name: Install K3s server
+      shell: |
+        INSTALL_K3S_VERSION={{ k3s_version }} \
+        K3S_KUBECONFIG_MODE="644" \
+        sh /tmp/k3s-install.sh server \
+        --cluster-init \
+        --disable servicelb \
+        --write-kubeconfig-mode 644
+      args:
+        creates: /etc/rancher/k3s/k3s.yaml
+
+    - name: Wait for K3s to be ready
+      command: kubectl get nodes
+      register: nodes
+      until: nodes.rc == 0
+      retries: 30
+      delay: 10
+      changed_when: false
+
+    - name: Get node token
+      slurp:
+        src: /var/lib/rancher/k3s/server/node-token
+      register: node_token
+      when: not ansible_check_mode
+
+    - name: Store token for workers
+      set_fact:
+        k3s_token: "{{ node_token['content'] | b64decode | trim }}"
+      when: not ansible_check_mode
+
+    - name: Get master IP
+      set_fact:
+        k3s_master_ip: "{{ ansible_host }}"
+
+- name: Install K3s on worker nodes
+  hosts: k3s_workers
+  become: true
+  vars:
+    k3s_version: "v1.35.0+k3s1"
+  tasks:
+    - name: Download K3s install script
+      get_url:
+        url: https://get.k3s.io
+        dest: /tmp/k3s-install.sh
+        mode: '0755'
+
+    - name: Install K3s agent
+      shell: |
+        INSTALL_K3S_VERSION={{ k3s_version }} \
+        K3S_URL=https://{{ hostvars[groups['k3s_masters'][0]]['ansible_host'] }}:6443 \
+        K3S_TOKEN={{ hostvars[groups['k3s_masters'][0]]['k3s_token'] }} \
+        sh /tmp/k3s-install.sh agent
+      args:
+        creates: /var/lib/rancher/k3s/agent
+      when: not ansible_check_mode
+
+- name: Fetch kubeconfig to local machine
+  hosts: k3s_masters
+  become: true
+  tasks:
+    - name: Read kubeconfig
+      slurp:
+        src: /etc/rancher/k3s/k3s.yaml
+      register: kubeconfig
+      when: not ansible_check_mode
+    - name: Save kubeconfig locally
+      delegate_to: localhost
+      become: false
+      copy:
+        content: "{{ kubeconfig['content'] | b64decode | replace('127.0.0.1', ansible_host) }}"
+        dest: "{{ playbook_dir }}/../kubeconfig.yaml"
+        mode: '0600'
+      when: not ansible_check_mode
