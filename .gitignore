@@ -4,3 +4,4 @@ ansible/kubeconfig.yaml
 
 # Optional
 tutorials/
+log/
