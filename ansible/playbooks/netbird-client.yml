@@ -32,7 +32,7 @@
         netbird up
         --management-url {{ netbird_management_url }}
         --setup-key {{ netbird_setup_key }}
-      when: "'Connected' not in netbird_status.stdout"
+      when: "'Management: Connected' not in netbird_status.stdout"
 
     - name: Verify Netbird connection
       command: netbird status
