@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: linkwarden
+  namespace: linkwarden
+  labels:
+    app.kubernetes.io/name: linkwarden
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - linkwarden.nicholasshaw.cloud
+  rules:
+    - host: linkwarden.nicholasshaw.cloud
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: linkwarden
+                port:
+                  number: 3000
