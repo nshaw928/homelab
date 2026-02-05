@@ -12,8 +12,8 @@ configMapGenerator:
   - name: glance
     files:
       - config/glance.yml
-      - config/dashboard.yml
-      - config/gaming.yml
+      - config/home.yml
+      - config/media.yml
 
 generatorOptions:
   disableNameSuffixHash: true

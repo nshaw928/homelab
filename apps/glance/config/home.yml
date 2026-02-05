@@ -1,0 +1,90 @@
+  - name: Home
+    slug: ""
+    columns:
+      - size: small
+        widgets:
+          - type: calendar
+            first-day-of-week: sunday
+
+          - type: weather
+            location: 29615
+            units: imperial
+            hour-format: 12h
+
+      - size: full
+        widgets:
+          - type: monitor
+            title: Applications
+            cache: 1m
+            sites:
+              - title: Linkwarden
+                url: https://linkwarden.nicholasshaw.cloud
+                icon: sh:linkwarden
+              - title: Spacedrive
+                url: https://spacedrive.nicholasshaw.cloud
+                icon: sh:spacedrive
+
+          - type: monitor
+            title: Infrastructure
+            cache: 1m
+            sites:
+              - title: ArgoCD
+                url: https://argocd.nicholasshaw.cloud
+                icon: sh:argocd
+              - title: Longhorn
+                url: https://longhorn.nicholasshaw.cloud
+                icon: sh:longhorn
+              - title: Netbird
+                url: https://netbird.nicholasshaw.cloud
+                icon: sh:netbird
+
+          - type: split-column
+            widgets:
+              - type: group
+                title: Reddit
+                widgets:
+                  - type: reddit
+                    title: r/selfhosted
+                    subreddit: selfhosted
+                    show-thumbnails: true
+                    collapse-after: 5
+                    limit: 10
+                  - type: reddit
+                    title: r/homelab
+                    subreddit: homelab
+                    show-thumbnails: true
+                    collapse-after: 5
+                    limit: 10
+
+              - type: group
+                title: RSS
+                widgets:
+                  - type: rss
+                    title: All
+                    limit: 12
+                    collapse-after: 6
+                    feeds:
+                      - url: https://selfh.st/rss/
+                        title: Selfh.st
+                      - url: https://www.linuxserver.io/blog/rss.xml
+                        title: LinuxServer
+                      - url: https://opensource.com/feed
+                        title: Opensource.com
+                  - type: rss
+                    title: Selfh.st
+                    limit: 10
+                    collapse-after: 5
+                    feeds:
+                      - url: https://selfh.st/rss/
+                  - type: rss
+                    title: LinuxServer
+                    limit: 10
+                    collapse-after: 5
+                    feeds:
+                      - url: https://www.linuxserver.io/blog/rss.xml
+                  - type: rss
+                    title: Opensource.com
+                    limit: 10
+                    collapse-after: 5
+                    feeds:
+                      - url: https://opensource.com/feed

@@ -6,5 +6,5 @@ theme:
   light: false
 
 pages:
-  - $include: dashboard.yml
-  - $include: gaming.yml
+  - $include: home.yml
+  - $include: media.yml
