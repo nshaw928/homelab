@@ -3,8 +3,6 @@ kind: PersistentVolumeClaim
 metadata:
   name: spacedrive-data
   namespace: spacedrive
-  annotations:
-    numberOfReplicas: "2"
 spec:
   accessModes:
     - ReadWriteOnce
