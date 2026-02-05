@@ -16,7 +16,7 @@ data:
       - Cluster:
           style: row
           columns: 4
-      - Infrastructure:
+      - Applications:
           style: row
           columns: 3
   bookmarks.yaml: |
@@ -40,6 +40,15 @@ data:
             href: https://longhorn.nicholasshaw.cloud
             description: Distributed block storage
             icon: longhorn.png
+    - Applications:
+        - Linkwarden:
+            href: https://linkwarden.nicholasshaw.cloud
+            description: Collaborative bookmark manager
+            icon: linkwarden.png
+        - Spacedrive:
+            href: https://spacedrive.nicholasshaw.cloud
+            description: File manager and organizer
+            icon: spacedrive.png
   widgets.yaml: |
     - kubernetes:
         cluster:
