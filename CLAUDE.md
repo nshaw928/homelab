@@ -178,6 +178,7 @@ ansible-playbook ansible/playbooks/netbird-client.yml
 - brief and concise
 - no trailing period
 - describe what changed, not why
+- no co-authored-by lines
 
 Examples:
 - `add Longhorn v1.8.1 and CLAUDE.md`

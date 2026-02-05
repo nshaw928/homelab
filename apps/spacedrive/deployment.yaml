@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spacedrive
+  namespace: spacedrive
+  labels:
+    app: spacedrive
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: spacedrive
+  template:
+    metadata:
+      labels:
+        app: spacedrive
+    spec:
+      containers:
+        - name: spacedrive
+          image: ghcr.io/spacedriveapp/spacedrive/server:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: SD_AUTH
+              valueFrom:
+                secretKeyRef:
+                  name: spacedrive-auth
+                  key: SD_AUTH
+          volumeMounts:
+            - name: data
+              mountPath: /var/spacedrive
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: spacedrive-data
