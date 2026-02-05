@@ -1,0 +1,9 @@
+name: Gaming
+slug: gaming
+columns:
+  - size: full
+    widgets:
+      - type: twitch-top-games
+        title: Top Games on Twitch
+        limit: 10
+        collapse-after: 5
