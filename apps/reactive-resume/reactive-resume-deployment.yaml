@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reactive-resume
+  namespace: reactive-resume
+  labels:
+    app.kubernetes.io/name: reactive-resume
+spec:
+  revisionHistoryLimit: 3
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: reactive-resume
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: reactive-resume
+    spec:
+      containers:
+        - name: reactive-resume
+          image: amruthpillai/reactive-resume:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          env:
+            - name: APP_URL
+              value: "https://resume.nicholasshaw.cloud"
+            - name: AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: reactive-resume-secrets
+                  key: AUTH_SECRET
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: reactive-resume-secrets
+                  key: POSTGRES_PASSWORD
+            - name: DATABASE_URL
+              value: "postgresql://reactive-resume:$(POSTGRES_PASSWORD)@reactive-resume-postgres:5432/reactive-resume"
+            - name: PRINTER_ENDPOINT
+              value: "ws://reactive-resume-printer:3000"
+            - name: TZ
+              value: "America/New_York"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "200m"
+            limits:
+              memory: "1Gi"
+              cpu: "1000m"
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
