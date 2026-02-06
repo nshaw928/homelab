@@ -230,10 +230,30 @@ env:
         key: AUTH_SECRET
 ```
 
+### Backup Sealing Keys
+
+Export all active sealing keys (store securely, NOT in git):
+
+```bash
+kubectl get secret -n kube-system \
+  -l sealedsecrets.bitnami.com/sealed-secrets-key=active \
+  -o yaml > ~/sealed-secrets-keys-backup.yaml
+```
+
+### Restore Sealing Keys
+
+On a new cluster, apply the backup before deploying SealedSecrets:
+
+```bash
+kubectl apply -f ~/sealed-secrets-keys-backup.yaml
+kubectl delete pod -n kube-system -l app.kubernetes.io/name=sealed-secrets
+```
+
 ### Important Notes
 
 - Sealed secrets are cluster-specific (tied to the controller's key)
-- If the cluster is rebuilt, backup the sealing key or re-seal all secrets
+- Backup keys periodically - new keys are generated every 30 days
+- Store backups in a password manager or encrypted storage, never in git
 - Install kubeseal locally: `~/.local/bin/kubeseal` or via AUR
 
 ## VPN Access with Netbird
