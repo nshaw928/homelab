@@ -16,7 +16,19 @@
             title: YouTube
             channels:
               - UCsBjURrPoezykLs9EqgamOA  # Fireship
-              - UCXuqSBlHAE6Xw-yeJA0Tunw  # Linus Tech Tips
+              - UC3KEoMzNz8eYnwBC34RaKCQ  # Simone Giertz
+              - UCbtEd1MuY6gd2RpdWqkzXFw  # Morley Kert
+              - UCmZ9rAoFzPOKQbYutepd_5g  # Michael Burns
+              - UCtHaxi4GTYDpJgMSGy7AeSw  # Michael Reeves
+              - UCQJQB-ij7HNYKCyNdi0Y--Q  # Make with Miles
+              - UCOT2iLov0V7Re7ku_3UBtcQ  # Hank Green
+              - UCo71RUe6DX4w-Vd47rFLXPg  # Typecraft
+              - UCR-DXc1voovS8nhAvccRZhg  # Jeff Geerling
+              - UCSwe6GQYEyG7Oxnb2nqawFg  # Bricks and Disorder
+              - UCLuYADJ6hESLHX87JnsGbjA  # Josh Johnson
+              - UC-AQKm7HUNMmxjdS371MSwg  # Channel 5
+              - UCMiyV_Ib77XLpzHPQH_q0qQ  # Veronica Explains
+              - UCSuT9FSddzI6W5Bij9XwtmA  # Internet Shaquille
             limit: 12
             collapse-after: 6
             style: grid-cards
