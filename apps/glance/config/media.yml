@@ -1,15 +1,6 @@
   - name: Media
     slug: media
     columns:
-      - size: small
-        widgets:
-          - type: twitch-channels
-            title: Live Streams
-            channels:
-              - theprimeagen
-              - piratesoftware
-            collapse-after: 5
-
       - size: full
         widgets:
           - type: videos
@@ -32,3 +23,12 @@
             limit: 12
             collapse-after: 6
             style: grid-cards
+
+      - size: small
+              widgets:
+                - type: twitch-channels
+                  title: Live Streams
+                  channels:
+                    - theprimeagen
+                    - piratesoftware
+                  collapse-after: 5
