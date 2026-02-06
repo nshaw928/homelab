@@ -25,10 +25,10 @@
             style: grid-cards
 
       - size: small
-              widgets:
-                - type: twitch-channels
-                  title: Live Streams
-                  channels:
-                    - theprimeagen
-                    - piratesoftware
-                  collapse-after: 5
+        widgets:
+          - type: twitch-channels
+            title: Live Streams
+            channels:
+              - theprimeagen
+              - piratesoftware
+            collapse-after: 5
