@@ -157,6 +157,85 @@ spec:
 - Reflector mirrors the secret to: `kube-system`, `argocd`, `longhorn-system`
 - ClusterIssuers: `letsencrypt-staging`, `letsencrypt-production`
 
+## Automatic ConfigMap/Secret Reload
+
+Stakater Reloader automatically restarts pods when their referenced ConfigMaps or Secrets change.
+
+### Enabling for a Deployment
+
+Add the annotation to the deployment metadata:
+
+```yaml
+metadata:
+  annotations:
+    reloader.stakater.com/auto: "true"
+```
+
+This watches all ConfigMaps and Secrets used by the deployment. When any change is detected, Reloader triggers a rolling restart.
+
+## Secret Management with Sealed Secrets
+
+Bitnami Sealed Secrets encrypts secrets so they can be safely stored in git. The controller decrypts them in-cluster.
+
+### Creating a Sealed Secret
+
+```bash
+# Generate secret values
+AUTH_SECRET=$(openssl rand -hex 32)
+DB_PASSWORD=$(openssl rand -base64 24)
+
+# Create a regular secret (dry-run, don't apply!)
+kubectl create secret generic my-app-secrets \
+  --namespace my-app \
+  --from-literal=AUTH_SECRET="$AUTH_SECRET" \
+  --from-literal=DB_PASSWORD="$DB_PASSWORD" \
+  --dry-run=client -o yaml > /tmp/secret.yaml
+
+# Seal it with the cluster's public key
+kubeseal \
+  --controller-name=sealed-secrets-controller \
+  --controller-namespace=kube-system \
+  --format yaml < /tmp/secret.yaml > apps/my-app/sealed-secret.yaml
+
+# Remove the plaintext
+rm /tmp/secret.yaml
+```
+
+### SealedSecret Manifest
+
+The sealed secret is safe to commit to git:
+
+```yaml
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: my-app-secrets
+  namespace: my-app
+spec:
+  encryptedData:
+    AUTH_SECRET: AgBy3i4OJSWK+PiTySYZZA9rO43cGDEq...
+    DB_PASSWORD: AgBwhBx2QAC+Ow7BmPrH8sFpKmLdlJxX...
+```
+
+### Using in a Deployment
+
+Reference the secret normally - the controller creates a regular Secret from the SealedSecret:
+
+```yaml
+env:
+  - name: AUTH_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: my-app-secrets
+        key: AUTH_SECRET
+```
+
+### Important Notes
+
+- Sealed secrets are cluster-specific (tied to the controller's key)
+- If the cluster is rebuilt, backup the sealing key or re-seal all secrets
+- Install kubeseal locally: `~/.local/bin/kubeseal` or via AUR
+
 ## VPN Access with Netbird
 
 All homelab services are VPN-only via Netbird. Connect to VPN before accessing `*.nicholasshaw.cloud`.
