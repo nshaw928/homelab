@@ -75,8 +75,14 @@
                     feeds:
                       - url: https://www.technologyreview.com/feed/
                   - type: rss
-                    title: Wired Guides
+                    title: NPR
                     limit: 10
                     collapse-after: 5
                     feeds:
-                      - url: https://www.wired.com/feed/tag/wired-guide/latest/rss
+                      - url: http://www.npr.org/rss/rss.php?id=1001
+                  - type: rss
+                    title: Wired
+                    limit: 10
+                    collapse-after: 5
+                    feeds:
+                      - url: http://feeds.wired.com/wired/index
