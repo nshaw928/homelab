@@ -1,0 +1,97 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kube-prometheus-stack
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/compare-options: ServerSideDiff=true
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: kube-prometheus-stack
+    targetRevision: 72.6.2
+    helm:
+      values: |
+        # Grafana configuration
+        grafana:
+          adminPassword: "admin"
+          persistence:
+            enabled: true
+            storageClassName: longhorn
+            size: 5Gi
+          ingress:
+            enabled: true
+            ingressClassName: traefik
+            hosts:
+              - grafana.nicholasshaw.cloud
+            tls:
+              - hosts:
+                  - grafana.nicholasshaw.cloud
+            annotations:
+              traefik.ingress.kubernetes.io/router.entrypoints: websecure
+              traefik.ingress.kubernetes.io/router.tls: "true"
+
+        # Prometheus configuration
+        prometheus:
+          ingress:
+            enabled: true
+            ingressClassName: traefik
+            hosts:
+              - prometheus.nicholasshaw.cloud
+            tls:
+              - hosts:
+                  - prometheus.nicholasshaw.cloud
+            annotations:
+              traefik.ingress.kubernetes.io/router.entrypoints: websecure
+              traefik.ingress.kubernetes.io/router.tls: "true"
+          prometheusSpec:
+            retention: 15d
+            storageSpec:
+              volumeClaimTemplate:
+                spec:
+                  storageClassName: longhorn
+                  accessModes: ["ReadWriteOnce"]
+                  resources:
+                    requests:
+                      storage: 20Gi
+            resources:
+              requests:
+                memory: 512Mi
+                cpu: 200m
+              limits:
+                memory: 2Gi
+
+        # AlertManager configuration
+        alertmanager:
+          alertmanagerSpec:
+            storage:
+              volumeClaimTemplate:
+                spec:
+                  storageClassName: longhorn
+                  accessModes: ["ReadWriteOnce"]
+                  resources:
+                    requests:
+                      storage: 5Gi
+
+        # Node Exporter for host metrics
+        nodeExporter:
+          enabled: true
+
+        # Kubernetes metrics
+        kubeStateMetrics:
+          enabled: true
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - SkipDryRunOnMissingResource=true

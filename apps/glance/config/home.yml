@@ -40,6 +40,12 @@
               - title: Netbird
                 url: https://netbird.nicholasshaw.cloud
                 icon: sh:netbird
+              - title: Prometheus
+                url: https://prometheus.nicholasshaw.cloud
+                icon: sh:prometheus
+              - title: Grafana
+                url: https://grafana.nicholasshaw.cloud
+                icon: sh:grafana
 
           - type: split-column
             widgets:
