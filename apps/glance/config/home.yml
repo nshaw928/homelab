@@ -46,13 +46,13 @@
                   - type: reddit
                     title: r/selfhosted
                     subreddit: selfhosted
-                    show-thumbnails: true
+                    show-thumbnails: false
                     collapse-after: 5
                     limit: 10
                   - type: reddit
                     title: r/homelab
                     subreddit: homelab
-                    show-thumbnails: true
+                    show-thumbnails: false
                     collapse-after: 5
                     limit: 10
 
@@ -60,31 +60,20 @@
                 title: RSS
                 widgets:
                   - type: rss
-                    title: All
-                    limit: 12
-                    collapse-after: 6
-                    feeds:
-                      - url: https://selfh.st/rss/
-                        title: Selfh.st
-                      - url: https://www.linuxserver.io/blog/rss.xml
-                        title: LinuxServer
-                      - url: https://opensource.com/feed
-                        title: Opensource.com
-                  - type: rss
-                    title: Selfh.st
+                    title: EFF
                     limit: 10
                     collapse-after: 5
                     feeds:
-                      - url: https://selfh.st/rss/
+                      - url: https://www.eff.org/rss/updates.xml
                   - type: rss
-                    title: LinuxServer
+                    title: MIT Tech Review
                     limit: 10
                     collapse-after: 5
                     feeds:
-                      - url: https://www.linuxserver.io/blog/rss.xml
+                      - url: https://www.technologyreview.com/feed/
                   - type: rss
-                    title: Opensource.com
+                    title: Wired Guides
                     limit: 10
                     collapse-after: 5
                     feeds:
-                      - url: https://opensource.com/feed
+                      - url: https://www.wired.com/feed/tag/wired-guide/latest/rss
