@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: obsidian-livesync
+  namespace: obsidian-livesync
+  labels:
+    app.kubernetes.io/name: obsidian-livesync
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - obsidian-livesync.nicholasshaw.cloud
+  rules:
+    - host: obsidian-livesync.nicholasshaw.cloud
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: couchdb
+                port:
+                  number: 5984
