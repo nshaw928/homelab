@@ -19,8 +19,12 @@ spec:
     spec:
       containers:
         - name: spacedrive
-          image: ghcr.io/spacedriveapp/spacedrive/server:latest
-          imagePullPolicy: Always
+          image: ghcr.io/spacedriveapp/spacedrive/server:0.4.2
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 8080

@@ -18,10 +18,18 @@ spec:
       labels:
         app.kubernetes.io/name: linkwarden
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
       containers:
         - name: linkwarden
-          image: ghcr.io/linkwarden/linkwarden:latest
-          imagePullPolicy: Always
+          image: ghcr.io/linkwarden/linkwarden:v2.13.5
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 3000

@@ -67,14 +67,27 @@
         dest: /tmp/k3s-install.sh
         mode: '0755'
 
+    - name: Create audit log directory
+      file:
+        path: /var/log/kubernetes
+        state: directory
+        mode: '0750'
+        owner: root
+        group: root
+
     - name: Install K3s server
       shell: |
         INSTALL_K3S_VERSION={{ k3s_version }} \
-        K3S_KUBECONFIG_MODE="644" \
+        K3S_KUBECONFIG_MODE="600" \
         sh /tmp/k3s-install.sh server \
         --cluster-init \
         --disable servicelb \
-        --write-kubeconfig-mode 644
+        --write-kubeconfig-mode 600 \
+        --secrets-encryption \
+        --kube-apiserver-arg=audit-log-path=/var/log/kubernetes/audit.log \
+        --kube-apiserver-arg=audit-log-maxage=30 \
+        --kube-apiserver-arg=audit-log-maxbackup=10 \
+        --kube-apiserver-arg=audit-log-maxsize=100
       args:
         creates: /etc/rancher/k3s/k3s.yaml
 

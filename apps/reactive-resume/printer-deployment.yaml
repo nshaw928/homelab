@@ -18,10 +18,18 @@ spec:
         app.kubernetes.io/name: reactive-resume-printer
         app.kubernetes.io/component: printer
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        fsGroup: 999
       containers:
         - name: printer
-          image: ghcr.io/browserless/chromium:latest
-          imagePullPolicy: Always
+          image: ghcr.io/browserless/chromium:v2.23.0
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 3000

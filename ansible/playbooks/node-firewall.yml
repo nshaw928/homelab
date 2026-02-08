@@ -1,0 +1,64 @@
+- name: Configure node firewall
+  hosts: k3s_cluster
+  become: true
+  tasks:
+    - name: Install ufw
+      apt:
+        name: ufw
+        state: present
+
+    - name: Set default deny incoming
+      ufw:
+        direction: incoming
+        default: deny
+
+    - name: Set default allow outgoing
+      ufw:
+        direction: outgoing
+        default: allow
+
+    - name: Allow SSH
+      ufw:
+        rule: allow
+        port: '22'
+        proto: tcp
+
+    - name: Allow Netbird WireGuard
+      ufw:
+        rule: allow
+        port: '51820'
+        proto: udp
+
+    - name: Allow K3s API server from cluster network
+      ufw:
+        rule: allow
+        port: '6443'
+        proto: tcp
+        src: '10.99.99.0/24'
+
+    - name: Allow Flannel VXLAN from cluster network
+      ufw:
+        rule: allow
+        port: '8472'
+        proto: udp
+        src: '10.99.99.0/24'
+
+    - name: Allow kubelet from cluster network
+      ufw:
+        rule: allow
+        port: '10250'
+        proto: tcp
+        src: '10.99.99.0/24'
+
+    - name: Allow HTTP and HTTPS for Traefik
+      ufw:
+        rule: allow
+        port: '{{ item }}'
+        proto: tcp
+      loop:
+        - '80'
+        - '443'
+
+    - name: Enable ufw
+      ufw:
+        state: enabled

@@ -18,10 +18,18 @@ spec:
       labels:
         app.kubernetes.io/name: reactive-resume
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
       containers:
         - name: reactive-resume
-          image: amruthpillai/reactive-resume:latest
-          imagePullPolicy: Always
+          image: amruthpillai/reactive-resume:v4.0.0
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          imagePullPolicy: IfNotPresent
           ports:
             - name: http
               containerPort: 3000

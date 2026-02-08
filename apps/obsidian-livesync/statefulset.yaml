@@ -18,10 +18,19 @@ spec:
         app.kubernetes.io/name: obsidian-livesync
         app.kubernetes.io/component: database
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 5984
+        runAsGroup: 5984
+        fsGroup: 5984
       initContainers:
         - name: init-config
-          image: couchdb:3
+          image: couchdb:3.4.3
           command: ["sh", "-c", "cp /tmp/config/local.ini /opt/couchdb/etc/local.d/"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
           volumeMounts:
             - name: config-source
               mountPath: /tmp/config
@@ -29,7 +38,11 @@ spec:
               mountPath: /opt/couchdb/etc/local.d
       containers:
         - name: couchdb
-          image: couchdb:3
+          image: couchdb:3.4.3
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
