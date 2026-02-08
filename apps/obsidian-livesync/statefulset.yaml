@@ -18,6 +18,15 @@ spec:
         app.kubernetes.io/name: obsidian-livesync
         app.kubernetes.io/component: database
     spec:
+      initContainers:
+        - name: init-config
+          image: couchdb:3
+          command: ["sh", "-c", "cp /tmp/config/local.ini /opt/couchdb/etc/local.d/"]
+          volumeMounts:
+            - name: config-source
+              mountPath: /tmp/config
+            - name: config
+              mountPath: /opt/couchdb/etc/local.d
       containers:
         - name: couchdb
           image: couchdb:3
@@ -41,8 +50,7 @@ spec:
             - name: data
               mountPath: /opt/couchdb/data
             - name: config
-              mountPath: /opt/couchdb/etc/local.d/local.ini
-              subPath: local.ini
+              mountPath: /opt/couchdb/etc/local.d
           resources:
             requests:
               memory: "256Mi"
@@ -63,9 +71,11 @@ spec:
             initialDelaySeconds: 5
             periodSeconds: 5
       volumes:
-        - name: config
+        - name: config-source
           configMap:
             name: couchdb-config
+        - name: config
+          emptyDir: {}
   volumeClaimTemplates:
     - metadata:
         name: data
