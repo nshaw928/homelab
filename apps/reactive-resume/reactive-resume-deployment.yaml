@@ -24,12 +24,12 @@ spec:
         fsGroup: 1000
       containers:
         - name: reactive-resume
-          image: amruthpillai/reactive-resume:v4.0.0
+          image: amruthpillai/reactive-resume:latest
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
               drop: ["ALL"]
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 3000
