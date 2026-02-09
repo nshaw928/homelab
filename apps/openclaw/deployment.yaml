@@ -41,6 +41,8 @@ spec:
               containerPort: 18790
               protocol: TCP
           env:
+            - name: NODE_OPTIONS
+              value: "--max-old-space-size=768"
             - name: HOME
               value: /home/node
             - name: OPENCLAW_GATEWAY_TOKEN
@@ -53,10 +55,10 @@ spec:
               mountPath: /home/node/.openclaw
           resources:
             requests:
-              memory: "256Mi"
+              memory: "512Mi"
               cpu: "200m"
             limits:
-              memory: "1Gi"
+              memory: "2Gi"
               cpu: "1000m"
           livenessProbe:
             tcpSocket:
