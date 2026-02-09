@@ -29,6 +29,9 @@
               - title: OpenClaw
                 url: https://openclaw.nicholasshaw.cloud
                 icon: sh:openclaw
+              - title: Open WebUI
+                url: https://openwebui.nicholasshaw.cloud
+                icon: sh:open-webui
 
           - type: monitor
             title: Infrastructure
