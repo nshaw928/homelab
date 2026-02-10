@@ -26,9 +26,6 @@
               - title: Reactive Resume
                 url: https://resume.nicholasshaw.cloud/dashboard/resumes
                 icon: sh:reactiveresume
-              - title: OpenClaw
-                url: https://openclaw.nicholasshaw.cloud
-                icon: sh:openclaw
               - title: Open WebUI
                 url: https://openwebui.nicholasshaw.cloud
                 icon: sh:open-webui
