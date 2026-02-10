@@ -29,6 +29,9 @@
               - title: Open WebUI
                 url: https://openwebui.nicholasshaw.cloud
                 icon: sh:open-webui
+              - title: Stoat
+                url: https://stoat.nicholasshaw.cloud
+                icon: sh:revolt
 
           - type: monitor
             title: Infrastructure

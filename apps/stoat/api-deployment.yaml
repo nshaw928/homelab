@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stoat-api
+  namespace: stoat
+  labels:
+    app.kubernetes.io/name: stoat-api
+    app.kubernetes.io/component: backend
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  revisionHistoryLimit: 3
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: stoat-api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: stoat-api
+        app.kubernetes.io/component: backend
+    spec:
+      containers:
+        - name: api
+          image: ghcr.io/revoltchat/server:20250930-2
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 14702
+              protocol: TCP
+          env:
+            - name: REVOLT_CONFIG
+              value: /config/Revolt.toml
+          volumeMounts:
+            - name: config
+              mountPath: /config/Revolt.toml
+              subPath: Revolt.toml
+              readOnly: true
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 5
+      volumes:
+        - name: config
+          secret:
+            secretName: stoat-secrets
+            items:
+              - key: Revolt.toml
+                path: Revolt.toml

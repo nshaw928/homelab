@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: stoat-autumn
+  namespace: stoat
+  labels:
+    app.kubernetes.io/name: stoat-autumn
+spec:
+  type: ClusterIP
+  ports:
+    - port: 14704
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: stoat-autumn
