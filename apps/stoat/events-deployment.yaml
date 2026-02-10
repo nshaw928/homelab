@@ -30,12 +30,9 @@ spec:
             - name: http
               containerPort: 14703
               protocol: TCP
-          env:
-            - name: REVOLT_CONFIG
-              value: /config/Revolt.toml
           volumeMounts:
             - name: config
-              mountPath: /config/Revolt.toml
+              mountPath: /Revolt.toml
               subPath: Revolt.toml
               readOnly: true
           resources:

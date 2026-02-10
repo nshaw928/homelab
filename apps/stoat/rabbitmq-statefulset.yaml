@@ -53,16 +53,18 @@ spec:
                 - rabbitmq-diagnostics
                 - -q
                 - ping
-            initialDelaySeconds: 30
+            initialDelaySeconds: 90
             periodSeconds: 10
+            timeoutSeconds: 5
           readinessProbe:
             exec:
               command:
                 - rabbitmq-diagnostics
                 - -q
                 - check_running
-            initialDelaySeconds: 10
+            initialDelaySeconds: 60
             periodSeconds: 5
+            timeoutSeconds: 5
   volumeClaimTemplates:
     - metadata:
         name: data
