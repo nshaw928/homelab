@@ -118,6 +118,21 @@ volumeClaimTemplates:
 
 Access at: `https://longhorn.nicholasshaw.cloud` (requires Netbird VPN)
 
+## Load Balancing with MetalLB
+
+MetalLB assigns VIP `10.99.99.20` to the Traefik LoadBalancer service. VPN clients route `10.99.99.0/24` to a Netbird route peer node, where kube-proxy iptables DNAT forwards traffic to Traefik. MetalLB L2 mode is configured but ARP isn't needed over WireGuard — the L3 route + kube-proxy handles it.
+
+- MetalLB pool config: `infrastructure/metallb/metallb-config.yaml`
+- MetalLB is installed via raw manifests (not ArgoCD): `kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.15.3/config/manifests/metallb-native.yaml`
+- Cloudflare DNS `*.nicholasshaw.cloud` points to `10.99.99.20`
+
+## Ingress with Traefik
+
+Traefik is the K3s-bundled ingress controller, exposed as a LoadBalancer service with external IP `10.99.99.20` via MetalLB.
+
+- Config: `infrastructure/traefik/traefik-config.yaml` (deployed via `ansible/playbooks/traefik-config.yml`)
+- The config only sets HTTP-to-HTTPS redirect; Traefik uses default settings otherwise
+
 ## TLS Certificates
 
 Wildcard certificate for `*.nicholasshaw.cloud` managed by cert-manager with Cloudflare DNS-01 challenge.

@@ -1,6 +1,6 @@
 ---
 - name: Configure Traefik TLS on master node
-  hosts: k3s_master
+  hosts: k3s_masters
   become: true
   gather_facts: false
 

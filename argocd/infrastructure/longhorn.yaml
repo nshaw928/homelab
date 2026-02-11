@@ -27,6 +27,7 @@ spec:
           host: longhorn.nicholasshaw.cloud
           ingressClassName: traefik
           tls: true
+          tlsSecret: nicholasshaw-cloud-wildcard-tls
           annotations:
             traefik.ingress.kubernetes.io/router.entrypoints: websecure
             traefik.ingress.kubernetes.io/router.tls: "true"
