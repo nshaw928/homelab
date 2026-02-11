@@ -20,9 +20,6 @@
               - title: Linkwarden
                 url: https://linkwarden.nicholasshaw.cloud
                 icon: sh:linkwarden
-              - title: Spacedrive
-                url: https://spacedrive.nicholasshaw.cloud
-                icon: sh:spacedrive
               - title: Reactive Resume
                 url: https://resume.nicholasshaw.cloud/dashboard/resumes
                 icon: sh:reactiveresume
