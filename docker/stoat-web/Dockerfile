@@ -8,7 +8,8 @@ ARG VITE_WS_URL
 ARG VITE_MEDIA_URL
 ARG VITE_PROXY_URL
 RUN pnpm install --frozen-lockfile
-RUN pnpm --filter client build
+WORKDIR /app/packages/client
+RUN pnpm exec vite build
 
 FROM nginx:alpine
 COPY --from=build /app/packages/client/dist /usr/share/nginx/html
