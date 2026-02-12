@@ -25,6 +25,12 @@ spec:
             enabled: true
             storageClassName: longhorn
             size: 5Gi
+          additionalDataSources:
+            - name: Loki
+              type: loki
+              url: http://loki-gateway.monitoring.svc.cluster.local
+              access: proxy
+              isDefault: false
           ingress:
             enabled: true
             ingressClassName: traefik
