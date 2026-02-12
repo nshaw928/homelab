@@ -60,6 +60,9 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "1000m"
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
           livenessProbe:
             httpGet:
               path: /api/health
@@ -74,3 +77,7 @@ spec:
             initialDelaySeconds: 30
             periodSeconds: 10
             timeoutSeconds: 5
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: reactive-resume-data
