@@ -3,8 +3,10 @@ RUN corepack enable
 RUN apk add --no-cache git
 WORKDIR /app
 RUN git clone --recurse-submodules --depth=1 https://github.com/stoatchat/for-web.git .
-# assets submodule uses SSH (private) and gets skipped in CI — create empty dir
-RUN mkdir -p packages/client/assets
+# assets submodule uses SSH (private) and gets skipped — create placeholder
+RUN mkdir -p packages/client/public/assets/web && \
+    echo '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 40"><text x="0" y="30" font-size="28" fill="white">Stoat</text></svg>' \
+    > packages/client/public/assets/web/wordmark.svg
 ARG VITE_API_URL
 ARG VITE_WS_URL
 ARG VITE_MEDIA_URL
