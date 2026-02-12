@@ -26,6 +26,9 @@ spec:
         - name: api
           image: ghcr.io/stoatchat/api:v0.11.0
           imagePullPolicy: IfNotPresent
+          env:
+            - name: REVOLT_UNSAFE_NO_EMAIL
+              value: "1"
           ports:
             - name: http
               containerPort: 14702
