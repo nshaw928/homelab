@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
         - name: gifbox
-          image: ghcr.io/revoltchat/gifbox:20250930-2
+          image: ghcr.io/stoatchat/gifbox:v0.11.0
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

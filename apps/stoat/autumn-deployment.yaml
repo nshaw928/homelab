@@ -47,7 +47,7 @@ spec:
                   key: MINIO_ROOT_PASSWORD
       containers:
         - name: autumn
-          image: ghcr.io/revoltchat/autumn:20250930-2
+          image: ghcr.io/stoatchat/file-server:v0.11.0
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
         - name: pushd
-          image: ghcr.io/revoltchat/pushd:20250930-2
+          image: ghcr.io/stoatchat/pushd:v0.11.0
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: config

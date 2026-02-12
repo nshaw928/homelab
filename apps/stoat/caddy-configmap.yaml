@@ -12,27 +12,35 @@ data:
     }
 
     :8080 {
-      handle /ws {
+      route /ws {
         reverse_proxy stoat-events:14703
       }
 
-      handle_path /api/* {
+      route /api/* {
+        uri strip_prefix /api
         reverse_proxy stoat-api:14702
+        header_down Location ^/ /api/
       }
 
-      handle_path /autumn/* {
+      route /autumn/* {
+        uri strip_prefix /autumn
         reverse_proxy stoat-autumn:14704
+        header_down Location ^/ /autumn/
       }
 
-      handle_path /january/* {
+      route /january/* {
+        uri strip_prefix /january
         reverse_proxy stoat-january:14705
+        header_down Location ^/ /january/
       }
 
-      handle_path /gifbox/* {
+      route /gifbox/* {
+        uri strip_prefix /gifbox
         reverse_proxy stoat-gifbox:14706
+        header_down Location ^/ /gifbox/
       }
 
-      handle {
+      route {
         reverse_proxy stoat-web:5000
       }
     }

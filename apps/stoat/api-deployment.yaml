@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: ghcr.io/revoltchat/server:20250930-2
+          image: ghcr.io/stoatchat/api:v0.11.0
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

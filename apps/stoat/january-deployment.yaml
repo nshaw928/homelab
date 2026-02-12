@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
         - name: january
-          image: ghcr.io/revoltchat/january:20250930-2
+          image: ghcr.io/stoatchat/proxy:v0.11.0
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
         - name: events
-          image: ghcr.io/revoltchat/bonfire:20250930-2
+          image: ghcr.io/stoatchat/events:v0.11.0
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

@@ -22,15 +22,12 @@ spec:
     spec:
       containers:
         - name: web
-          image: ghcr.io/revoltchat/client:master
+          image: ghcr.io/nshaw928/stoat-web:latest
           imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 5000
               protocol: TCP
-          env:
-            - name: REVOLT_PUBLIC_URL
-              value: "https://stoat.nicholasshaw.cloud"
           resources:
             requests:
               memory: "64Mi"

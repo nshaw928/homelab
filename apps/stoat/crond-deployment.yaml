@@ -24,7 +24,7 @@ spec:
     spec:
       containers:
         - name: crond
-          image: ghcr.io/revoltchat/crond:20250930-2
+          image: ghcr.io/stoatchat/crond:v0.11.0
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - name: config
