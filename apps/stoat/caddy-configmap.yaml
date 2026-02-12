@@ -18,26 +18,30 @@ data:
 
       route /api/* {
         uri strip_prefix /api
-        reverse_proxy stoat-api:14702
-        header_down Location ^/ /api/
+        reverse_proxy stoat-api:14702 {
+          header_down Location ^/ /api/
+        }
       }
 
       route /autumn/* {
         uri strip_prefix /autumn
-        reverse_proxy stoat-autumn:14704
-        header_down Location ^/ /autumn/
+        reverse_proxy stoat-autumn:14704 {
+          header_down Location ^/ /autumn/
+        }
       }
 
       route /january/* {
         uri strip_prefix /january
-        reverse_proxy stoat-january:14705
-        header_down Location ^/ /january/
+        reverse_proxy stoat-january:14705 {
+          header_down Location ^/ /january/
+        }
       }
 
       route /gifbox/* {
         uri strip_prefix /gifbox
-        reverse_proxy stoat-gifbox:14706
-        header_down Location ^/ /gifbox/
+        reverse_proxy stoat-gifbox:14706 {
+          header_down Location ^/ /gifbox/
+        }
       }
 
       route {
