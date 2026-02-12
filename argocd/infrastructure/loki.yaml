@@ -36,6 +36,7 @@ spec:
             retention_period: 168h
           compactor:
             retention_enabled: true
+            delete_request_store: filesystem
             working_directory: /var/loki/compactor
             compaction_interval: 10m
             retention_delete_delay: 2h
@@ -83,6 +84,14 @@ spec:
           replicas: 0
         bloomGateway:
           replicas: 0
+
+        # Disable caches and canary - not needed for homelab
+        chunksCache:
+          enabled: false
+        resultsCache:
+          enabled: false
+        lokiCanary:
+          enabled: false
 
         # Disable minio - using filesystem storage
         minio:
