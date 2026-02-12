@@ -14,6 +14,8 @@ RUN pnpm install --frozen-lockfile
 # build workspace dependencies before client (lingui-solid, stoat.js, etc.)
 RUN pnpm -r --if-present run build
 WORKDIR /app/packages/client
+# compile lingui catalogs (.po -> .js) with ESM exports
+RUN pnpm exec lingui compile --namespace es
 RUN pnpm exec vite build
 
 FROM nginx:alpine
