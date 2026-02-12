@@ -14,7 +14,6 @@ RUN pnpm install --frozen-lockfile
 # build workspace dependencies before client (lingui-solid, stoat.js, etc.)
 RUN pnpm -r --if-present run build
 WORKDIR /app/packages/client
-RUN pnpm exec lingui extract --clean && pnpm exec lingui compile
 RUN pnpm exec vite build
 
 FROM nginx:alpine
