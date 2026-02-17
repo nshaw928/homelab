@@ -3,6 +3,10 @@
     columns:
       - size: small
         widgets:
+          - type: search
+            search-engine: duckduckgo
+            autofocus: true
+
           - type: calendar
             first-day-of-week: sunday
 
@@ -49,6 +53,33 @@
               - title: Grafana
                 url: https://grafana.nicholasshaw.cloud
                 icon: sh:grafana
+
+          - type: bookmarks
+            groups:
+              - title: Social
+                links:
+                  - title: Reddit
+                    url: https://www.reddit.com
+                  - title: YouTube
+                    url: https://www.youtube.com
+                  - title: GitHub
+                    url: https://github.com
+              - title: Tools
+                links:
+                  - title: ChatGPT
+                    url: https://chatgpt.com
+                  - title: DuckDuckGo
+                    url: https://duckduckgo.com
+                  - title: Google Drive
+                    url: https://drive.google.com
+              - title: News
+                links:
+                  - title: Hacker News
+                    url: https://news.ycombinator.com
+                  - title: Ars Technica
+                    url: https://arstechnica.com
+                  - title: The Verge
+                    url: https://www.theverge.com
 
           - type: split-column
             widgets:
