@@ -1,126 +1,126 @@
-- name: Home
-  slug: ""
-  columns:
-    - size: small
-      widgets:
-        - type: search
-          search-engine: duckduckgo
-          autofocus: true
+  - name: Home
+    slug: ""
+    columns:
+      - size: small
+        widgets:
+          - type: search
+            search-engine: duckduckgo
+            autofocus: true
 
-        - type: calendar
-          first-day-of-week: sunday
+          - type: calendar
+            first-day-of-week: sunday
 
-        - type: reddit
-          title: r/selfhosted
-          subreddit: selfhosted
-          show-thumbnails: false
-          collapse-after: 5
-          limit: 10
+          - type: reddit
+            title: r/selfhosted
+            subreddit: selfhosted
+            show-thumbnails: false
+            collapse-after: 5
+            limit: 10
 
-        - type: reddit
-          title: r/homelab
-          subreddit: homelab
-          show-thumbnails: false
-          collapse-after: 5
-          limit: 10
+          - type: reddit
+            title: r/homelab
+            subreddit: homelab
+            show-thumbnails: false
+            collapse-after: 5
+            limit: 10
 
-    - size: full
-      widgets:
-        - type: monitor
-          title: Applications
-          cache: 1m
-          sites:
-            - title: Linkwarden
-              url: https://linkwarden.nicholasshaw.cloud
-              icon: sh:linkwarden
-            - title: Reactive Resume
-              url: https://resume.nicholasshaw.cloud/dashboard/resumes
-              icon: sh:reactiveresume
-            - title: Open WebUI
-              url: https://openwebui.nicholasshaw.cloud
-              icon: sh:open-webui
-            - title: Stoat
-              url: https://stoat.nicholasshaw.cloud
-              icon: sh:revolt
+      - size: full
+        widgets:
+          - type: monitor
+            title: Applications
+            cache: 1m
+            sites:
+              - title: Linkwarden
+                url: https://linkwarden.nicholasshaw.cloud
+                icon: sh:linkwarden
+              - title: Reactive Resume
+                url: https://resume.nicholasshaw.cloud/dashboard/resumes
+                icon: sh:reactiveresume
+              - title: Open WebUI
+                url: https://openwebui.nicholasshaw.cloud
+                icon: sh:open-webui
+              - title: Stoat
+                url: https://stoat.nicholasshaw.cloud
+                icon: sh:revolt
 
-        - type: bookmarks
-          groups:
-            - title: Social
-              links:
-                - title: Reddit
-                  url: https://www.reddit.com
-                - title: YouTube
-                  url: https://www.youtube.com
-                - title: GitHub
-                  url: https://github.com
-            - title: Tools
-              links:
-                - title: ChatGPT
-                  url: https://chatgpt.com
-                - title: DuckDuckGo
-                  url: https://duckduckgo.com
-                - title: Google Drive
-                  url: https://drive.google.com
-            - title: News
-              links:
-                - title: Hacker News
-                  url: https://news.ycombinator.com
-                - title: Ars Technica
-                  url: https://arstechnica.com
-                - title: The Verge
-                  url: https://www.theverge.com
+          - type: bookmarks
+            groups:
+              - title: Social
+                links:
+                  - title: Reddit
+                    url: https://www.reddit.com
+                  - title: YouTube
+                    url: https://www.youtube.com
+                  - title: GitHub
+                    url: https://github.com
+              - title: Tools
+                links:
+                  - title: ChatGPT
+                    url: https://chatgpt.com
+                  - title: DuckDuckGo
+                    url: https://duckduckgo.com
+                  - title: Google Drive
+                    url: https://drive.google.com
+              - title: News
+                links:
+                  - title: Hacker News
+                    url: https://news.ycombinator.com
+                  - title: Ars Technica
+                    url: https://arstechnica.com
+                  - title: The Verge
+                    url: https://www.theverge.com
 
-        - type: monitor
-          title: Infrastructure
-          cache: 1m
-          sites:
-            - title: ArgoCD
-              url: https://argocd.nicholasshaw.cloud
-              icon: sh:argocd
-            - title: Longhorn
-              url: https://longhorn.nicholasshaw.cloud
-              icon: sh:longhorn
-            - title: Netbird
-              url: https://netbird.nicholasshaw.cloud
-              icon: sh:netbird
-            - title: Prometheus
-              url: https://prometheus.nicholasshaw.cloud
-              icon: sh:prometheus
-            - title: Grafana
-              url: https://grafana.nicholasshaw.cloud
-              icon: sh:grafana
+          - type: monitor
+            title: Infrastructure
+            cache: 1m
+            sites:
+              - title: ArgoCD
+                url: https://argocd.nicholasshaw.cloud
+                icon: sh:argocd
+              - title: Longhorn
+                url: https://longhorn.nicholasshaw.cloud
+                icon: sh:longhorn
+              - title: Netbird
+                url: https://netbird.nicholasshaw.cloud
+                icon: sh:netbird
+              - title: Prometheus
+                url: https://prometheus.nicholasshaw.cloud
+                icon: sh:prometheus
+              - title: Grafana
+                url: https://grafana.nicholasshaw.cloud
+                icon: sh:grafana
 
-    - size: small
-      widgets:
-        - type: weather
-          location: 29615
-          units: imperial
-          hour-format: 12h
+      - size: small
+        widgets:
+          - type: weather
+            location: 29615
+            units: imperial
+            hour-format: 12h
 
-        - type: rss
-          title: EFF
-          limit: 10
-          collapse-after: 5
-          feeds:
-            - url: https://www.eff.org/rss/updates.xml
+          - type: rss
+            title: EFF
+            limit: 10
+            collapse-after: 5
+            feeds:
+              - url: https://www.eff.org/rss/updates.xml
 
-        - type: rss
-          title: MIT Tech Review
-          limit: 10
-          collapse-after: 5
-          feeds:
-            - url: https://www.technologyreview.com/feed/
+          - type: rss
+            title: MIT Tech Review
+            limit: 10
+            collapse-after: 5
+            feeds:
+              - url: https://www.technologyreview.com/feed/
 
-        - type: rss
-          title: NPR
-          limit: 10
-          collapse-after: 5
-          feeds:
-            - url: http://www.npr.org/rss/rss.php?id=1001
+          - type: rss
+            title: NPR
+            limit: 10
+            collapse-after: 5
+            feeds:
+              - url: http://www.npr.org/rss/rss.php?id=1001
 
-        - type: rss
-          title: Wired
-          limit: 10
-          collapse-after: 5
-          feeds:
-            - url: http://feeds.wired.com/wired/index
+          - type: rss
+            title: Wired
+            limit: 10
+            collapse-after: 5
+            feeds:
+              - url: http://feeds.wired.com/wired/index
