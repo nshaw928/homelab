@@ -2,6 +2,10 @@
 ansible/inventory/hosts.yml
 ansible/kubeconfig.yaml
 
+# Glance private feeds
+apps/glance/config/feeds-reddit.yml
+apps/glance/config/feeds-rss.yml
+
 # Optional
 tutorials/
 log/

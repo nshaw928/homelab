@@ -10,20 +10,7 @@
           - type: calendar
             first-day-of-week: sunday
 
-          - type: group
-            widgets:
-              - type: reddit
-                title: r/selfhosted
-                subreddit: selfhosted
-                show-thumbnails: false
-                collapse-after: 5
-                limit: 10
-              - type: reddit
-                title: r/homelab
-                subreddit: homelab
-                show-thumbnails: false
-                collapse-after: 5
-                limit: 10
+          - $include: feeds-reddit.yml
 
       - size: full
         widgets:
@@ -98,29 +85,4 @@
             units: imperial
             hour-format: 12h
 
-          - type: group
-            widgets:
-              - type: rss
-                title: EFF
-                limit: 10
-                collapse-after: 5
-                feeds:
-                  - url: https://www.eff.org/rss/updates.xml
-              - type: rss
-                title: MIT Tech Review
-                limit: 10
-                collapse-after: 5
-                feeds:
-                  - url: https://www.technologyreview.com/feed/
-              - type: rss
-                title: NPR
-                limit: 10
-                collapse-after: 5
-                feeds:
-                  - url: http://www.npr.org/rss/rss.php?id=1001
-              - type: rss
-                title: Wired
-                limit: 10
-                collapse-after: 5
-                feeds:
-                  - url: http://feeds.wired.com/wired/index
+          - $include: feeds-rss.yml

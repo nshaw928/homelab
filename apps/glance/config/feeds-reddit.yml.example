@@ -1,0 +1,8 @@
+          - type: group
+            widgets:
+              - type: reddit
+                title: r/example
+                subreddit: example
+                show-thumbnails: false
+                collapse-after: 5
+                limit: 10

@@ -47,5 +47,9 @@ spec:
               memory: 128Mi
       volumes:
         - name: glance-config
-          configMap:
-            name: glance
+          projected:
+            sources:
+              - configMap:
+                  name: glance
+              - secret:
+                  name: glance-feeds
