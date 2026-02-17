@@ -3,10 +3,6 @@
     columns:
       - size: small
         widgets:
-          - type: search
-            search-engine: duckduckgo
-            autofocus: true
-
           - type: calendar
             first-day-of-week: sunday
 
@@ -14,6 +10,10 @@
 
       - size: full
         widgets:
+          - type: search
+            search-engine: duckduckgo
+            autofocus: true
+
           - type: monitor
             title: Applications
             cache: 1m
