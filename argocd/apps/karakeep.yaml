@@ -1,0 +1,55 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: karakeep
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/compare-options: ServerSideDiff=true
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://karakeep-app.github.io/helm-charts
+    chart: karakeep
+    targetRevision: 0.27.0
+    helm:
+      values: |
+        applicationProtocol: https
+        applicationHost: karakeep.nicholasshaw.cloud
+
+        ingress:
+          karakeep:
+            annotations:
+              traefik.ingress.kubernetes.io/router.entrypoints: websecure
+              traefik.ingress.kubernetes.io/router.tls: "true"
+              traefik.ingress.kubernetes.io/router.middlewares: kube-system-security-headers@kubernetescrd,kube-system-rate-limit@kubernetescrd
+
+        persistence:
+          data:
+            storageClass: longhorn
+            accessMode: ReadWriteOnce
+            size: 2Gi
+
+        controllers:
+          karakeep:
+            containers:
+              karakeep:
+                env:
+                  OLLAMA_BASE_URL: "http://10.99.99.2:11434"
+                  INFERENCE_TEXT_MODEL: "mistral"
+                  INFERENCE_IMAGE_MODEL: "llava"
+
+        meilisearch:
+          persistence:
+            storageClass: longhorn
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: karakeep
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true

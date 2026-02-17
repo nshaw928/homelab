@@ -27,6 +27,9 @@
               - title: Open WebUI
                 url: https://openwebui.nicholasshaw.cloud
                 icon: sh:open-webui
+              - title: Karakeep
+                url: https://karakeep.nicholasshaw.cloud
+                icon: sh:karakeep
 
           - $include: bookmarks.yml
 
