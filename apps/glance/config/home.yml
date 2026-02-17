@@ -10,7 +10,7 @@
           - type: calendar
             first-day-of-week: sunday
 
-          - $include: feeds-reddit.yml
+          - $include: reddit.yml
 
       - size: full
         widgets:
@@ -31,32 +31,7 @@
                 url: https://stoat.nicholasshaw.cloud
                 icon: sh:revolt
 
-          - type: bookmarks
-            groups:
-              - title: Social
-                links:
-                  - title: Reddit
-                    url: https://www.reddit.com
-                  - title: YouTube
-                    url: https://www.youtube.com
-                  - title: GitHub
-                    url: https://github.com
-              - title: Tools
-                links:
-                  - title: ChatGPT
-                    url: https://chatgpt.com
-                  - title: DuckDuckGo
-                    url: https://duckduckgo.com
-                  - title: Google Drive
-                    url: https://drive.google.com
-              - title: News
-                links:
-                  - title: Hacker News
-                    url: https://news.ycombinator.com
-                  - title: Ars Technica
-                    url: https://arstechnica.com
-                  - title: The Verge
-                    url: https://www.theverge.com
+          - $include: bookmarks.yml
 
           - type: monitor
             title: Infrastructure
@@ -85,4 +60,4 @@
             units: imperial
             hour-format: 12h
 
-          - $include: feeds-rss.yml
+          - $include: rss.yml

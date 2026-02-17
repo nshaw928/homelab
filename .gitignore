@@ -3,8 +3,10 @@ ansible/inventory/hosts.yml
 ansible/kubeconfig.yaml
 
 # Glance private feeds
-apps/glance/config/feeds-reddit.yml
-apps/glance/config/feeds-rss.yml
+apps/glance/config/feeds/reddit.yml
+apps/glance/config/feeds/rss.yml
+apps/glance/config/feeds/youtube.yml
+apps/glance/config/bookmarks.yml
 
 # Optional
 tutorials/
