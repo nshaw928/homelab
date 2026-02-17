@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://github.com/nshaw928/homelab.git
     targetRevision: main
-    path: apps/obsidian-livesync
+    path: infrastructure/obsidian-livesync
   destination:
     server: https://kubernetes.default.svc
     namespace: obsidian-livesync

@@ -52,6 +52,9 @@
               - title: Grafana
                 url: https://grafana.nicholasshaw.cloud
                 icon: sh:grafana
+              - title: Obsidian Live Sync
+                url: https://obsidian-livesync.nicholasshaw.cloud
+                icon: sh:obsidian
 
       - size: small
         widgets:
