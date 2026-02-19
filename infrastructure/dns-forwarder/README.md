@@ -12,7 +12,29 @@ This DNS forwarder runs as a DaemonSet with `hostNetwork: true`, listening on po
 2. **hostNetwork: true** - Allows access to the node's 127.0.0.53 (systemd-resolved)
 3. **CoreDNS** - Patched to forward to the dns-forwarder pods instead of external DNS
 
-## Deployment
+## Deployment (Automated)
+
+Run the Ansible playbook to deploy the forwarder, patch CoreDNS, and verify DNS:
+
+```bash
+cd ~/projects/homelab/ansible
+ansible-playbook playbooks/dns-forwarder.yml
+```
+
+This playbook:
+1. Applies the dns-forwarder DaemonSet and ConfigMap
+2. Discovers node IPs from the Kubernetes API
+3. Patches the CoreDNS Corefile `forward` directive to use the forwarder pods
+4. Restarts CoreDNS and verifies DNS resolution with a test pod
+
+Re-run after any K3s upgrade that resets the CoreDNS ConfigMap.
+
+## Manual Deployment (Reference)
+
+<details>
+<summary>Click to expand manual steps</summary>
+
+Apply manifests:
 
 ```bash
 kubectl apply -f infrastructure/dns-forwarder/
@@ -24,9 +46,7 @@ Verify pods are running:
 kubectl get pods -n kube-system -l app=dns-forwarder
 ```
 
-## CoreDNS Configuration
-
-After deploying the forwarder (and after any k3s upgrade that resets CoreDNS), patch the CoreDNS ConfigMap to forward to the dns-forwarder:
+Patch the CoreDNS ConfigMap to forward to the dns-forwarder:
 
 ```bash
 kubectl edit configmap coredns -n kube-system
@@ -48,15 +68,15 @@ Then restart CoreDNS:
 kubectl rollout restart deployment coredns -n kube-system
 ```
 
-## Testing
-
-Test DNS resolution from within the cluster:
+Test DNS resolution:
 
 ```bash
 kubectl run -it --rm debug --image=busybox --restart=Never -- nslookup github.com
 ```
 
+</details>
+
 ## Notes
 
 - This is managed manually (not via ArgoCD) since it's kube-system infrastructure
-- k3s upgrades may reset the CoreDNS ConfigMap, requiring the patch to be reapplied
+- K3s upgrades may reset the CoreDNS ConfigMap — re-run the playbook to fix

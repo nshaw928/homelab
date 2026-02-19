@@ -1,0 +1,182 @@
+---
+- name: Deploy dns-forwarder and patch CoreDNS
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  environment:
+    KUBECONFIG: "{{ playbook_dir }}/../kubeconfig.yaml"
+
+  tasks:
+    - name: Apply dns-forwarder ConfigMap
+      kubernetes.core.k8s:
+        state: present
+        src: "{{ playbook_dir }}/../../infrastructure/dns-forwarder/configmap.yaml"
+
+    - name: Apply dns-forwarder DaemonSet
+      kubernetes.core.k8s:
+        state: present
+        src: "{{ playbook_dir }}/../../infrastructure/dns-forwarder/daemonset.yaml"
+
+    - name: Wait for dns-forwarder DaemonSet to be ready
+      kubernetes.core.k8s_info:
+        api_version: apps/v1
+        kind: DaemonSet
+        name: dns-forwarder
+        namespace: kube-system
+      register: ds_status
+      until: >
+        ds_status.resources | length > 0 and
+        ds_status.resources[0].status.desiredNumberScheduled is defined and
+        ds_status.resources[0].status.numberReady | default(0) == ds_status.resources[0].status.desiredNumberScheduled
+      retries: 30
+      delay: 10
+
+    - name: Get cluster node InternalIPs
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Node
+      register: node_info
+
+    - name: Build forward line from node IPs
+      set_fact:
+        node_ips: >-
+          {{ node_info.resources
+             | map(attribute='status.addresses')
+             | map('selectattr', 'type', 'equalto', 'InternalIP')
+             | map('map', attribute='address')
+             | map('first')
+             | sort
+             | list }}
+
+    - name: Set expected forward directive
+      set_fact:
+        expected_forward: "forward . {{ node_ips | map('regex_replace', '$', ':5353') | join(' ') }}"
+
+    - name: Show expected forward directive
+      debug:
+        msg: "{{ expected_forward }}"
+
+    - name: Get current CoreDNS ConfigMap
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: ConfigMap
+        name: coredns
+        namespace: kube-system
+      register: coredns_cm
+
+    - name: Extract current Corefile
+      set_fact:
+        current_corefile: "{{ coredns_cm.resources[0].data.Corefile }}"
+
+    - name: Check if forward line already correct
+      set_fact:
+        forward_already_correct: "{{ expected_forward in current_corefile }}"
+
+    - name: Patch Corefile forward directive
+      set_fact:
+        patched_corefile: "{{ current_corefile | regex_replace('forward\\s+\\.\\s+[^\\n]+', expected_forward) }}"
+      when: not forward_already_correct
+
+    - name: Apply patched CoreDNS ConfigMap
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: coredns
+            namespace: kube-system
+          data:
+            Corefile: "{{ patched_corefile }}"
+            NodeHosts: "{{ coredns_cm.resources[0].data.NodeHosts }}"
+      when: not forward_already_correct
+
+    - name: Restart CoreDNS deployment
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: coredns
+            namespace: kube-system
+          spec:
+            template:
+              metadata:
+                annotations:
+                  kubectl.kubernetes.io/restartedAt: "{{ lookup('pipe', 'date -u +%Y-%m-%dT%H:%M:%SZ') }}"
+      when: not forward_already_correct
+
+    - name: Wait for CoreDNS rollout
+      kubernetes.core.k8s_info:
+        api_version: apps/v1
+        kind: Deployment
+        name: coredns
+        namespace: kube-system
+      register: coredns_deploy
+      until: >
+        coredns_deploy.resources | length > 0 and
+        coredns_deploy.resources[0].status.updatedReplicas | default(0) == coredns_deploy.resources[0].spec.replicas and
+        coredns_deploy.resources[0].status.readyReplicas | default(0) == coredns_deploy.resources[0].spec.replicas
+      retries: 30
+      delay: 5
+      when: not forward_already_correct
+
+    - name: Skip message
+      debug:
+        msg: "CoreDNS forward line already correct, no changes needed"
+      when: forward_already_correct
+
+    - name: Clean up any previous DNS test pod
+      kubernetes.core.k8s:
+        state: absent
+        api_version: v1
+        kind: Pod
+        name: dns-test
+        namespace: default
+      ignore_errors: true
+
+    - name: Run DNS test pod
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Pod
+          metadata:
+            name: dns-test
+            namespace: default
+          spec:
+            containers:
+              - name: dns-test
+                image: busybox:1.36
+                command: ["nslookup", "github.com"]
+            restartPolicy: Never
+
+    - name: Wait for DNS test pod to complete
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Pod
+        name: dns-test
+        namespace: default
+      register: test_pod
+      until: >
+        test_pod.resources | length > 0 and
+        test_pod.resources[0].status.phase in ['Succeeded', 'Failed']
+      retries: 30
+      delay: 5
+
+    - name: Assert DNS resolution succeeded
+      assert:
+        that:
+          - test_pod.resources[0].status.phase == 'Succeeded'
+        fail_msg: "DNS test failed - nslookup github.com did not succeed"
+        success_msg: "DNS resolution working correctly"
+
+    - name: Clean up DNS test pod
+      kubernetes.core.k8s:
+        state: absent
+        api_version: v1
+        kind: Pod
+        name: dns-test
+        namespace: default
+      ignore_errors: true
