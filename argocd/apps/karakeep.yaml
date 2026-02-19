@@ -37,8 +37,9 @@ spec:
               karakeep:
                 env:
                   OLLAMA_BASE_URL: "http://10.99.99.2:11434"
-                  INFERENCE_TEXT_MODEL: "mistral"
+                  INFERENCE_TEXT_MODEL: "gemma3:4b"
                   INFERENCE_IMAGE_MODEL: "llava"
+                  INFERENCE_OUTPUT_SCHEMA: "plain"
 
         meilisearch:
           persistence:
