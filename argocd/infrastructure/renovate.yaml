@@ -10,7 +10,7 @@ spec:
   source:
     repoURL: https://docs.renovatebot.com/helm-charts
     chart: renovate
-    targetRevision: 43.25.8
+    targetRevision: 46.25.3
     helm:
       values: |
         cronjob:
