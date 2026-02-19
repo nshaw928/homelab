@@ -18,9 +18,6 @@
             title: Applications
             cache: 1m
             sites:
-              - title: Linkwarden
-                url: https://linkwarden.nicholasshaw.cloud
-                icon: sh:linkwarden
               - title: Reactive Resume
                 url: https://resume.nicholasshaw.cloud/dashboard/resumes
                 icon: sh:reactiveresume
