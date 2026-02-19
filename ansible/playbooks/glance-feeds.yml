@@ -1,0 +1,20 @@
+---
+- name: Deploy Glance feeds configmap from local files
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Create glance-feeds configmap
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: glance-feeds
+            namespace: glance
+          data:
+            bookmarks.yml: "{{ lookup('file', playbook_dir + '/../../apps/glance/config/bookmarks.yml') }}"
+            reddit.yml: "{{ lookup('file', playbook_dir + '/../../apps/glance/config/feeds/reddit.yml') }}"
+            rss.yml: "{{ lookup('file', playbook_dir + '/../../apps/glance/config/feeds/rss.yml') }}"
