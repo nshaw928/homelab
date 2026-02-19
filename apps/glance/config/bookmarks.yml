@@ -1,0 +1,26 @@
+- type: bookmarks
+  groups:
+    - title: Dev
+      links:
+        - title: GitHub
+          url: https://github.com/nshaw928
+        - title: Supabase
+          url: https://supabase.com/dashboard/org/fqxdaodpdmtodrbvywbv
+        - title: Vercel
+          url: https://vercel.com/accounts-2484s-projects
+    - title: Proton
+      links:
+        - title: Proton Mail
+          url: https://mail.proton.me
+        - title: Proton Drive
+          url: https://drive.proton.me
+        - title: Proton Pass
+          url: https://pass.proton.me
+    - title: News
+      links:
+        - title: Hacker News
+          url: https://news.ycombinator.com
+        - title: Ars Technica
+          url: https://arstechnica.com
+        - title: The Verge
+          url: https://www.theverge.com
