@@ -1,0 +1,23 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "argocd": {
+    "managerFilePatterns": ["/argocd/.+\\.yaml$/"]
+  },
+  "kubernetes": {
+    "managerFilePatterns": ["/apps/.+\\.yaml$/", "/infrastructure/.+\\.yaml$/"]
+  },
+  "packageRules": [
+    {
+      "description": "Auto-merge patch updates",
+      "matchUpdateTypes": ["patch"],
+      "automerge": true
+    },
+    {
+      "description": "Auto-merge minor updates",
+      "matchUpdateTypes": ["minor"],
+      "automerge": true
+    }
+  ],
+  "ignoreDeps": ["reactive-resume"]
+}

@@ -286,6 +286,39 @@ All homelab services are VPN-only via Netbird. Connect to VPN before accessing `
 ansible-playbook ansible/playbooks/netbird-client.yml
 ```
 
+## Automated Updates with Renovate
+
+Renovate runs as a CronJob every 6 hours, scanning for outdated Helm chart versions and container image tags.
+
+- Config: `renovate.json` (repo root)
+- Deployment: `argocd/infrastructure/renovate.yaml` (Helm chart CronJob)
+- Behavior: Patch and minor updates auto-merge. Major updates create PRs for review.
+
+### Adding a New App
+
+Deploy as normal. Renovate auto-detects:
+- Helm chart `targetRevision` in `argocd/apps/` and `argocd/infrastructure/` YAMLs
+- Container image tags in `apps/*/` and `infrastructure/*/` YAMLs
+
+### Skipping an App
+
+Add to `ignoreDeps` in `renovate.json`:
+```json
+"ignoreDeps": ["reactive-resume", "my-app-to-skip"]
+```
+
+### Manual Trigger
+
+```bash
+kubectl create job --from=cronjob/renovate renovate-manual -n renovate
+```
+
+### Logs
+
+```bash
+kubectl logs -n renovate job/renovate-<timestamp>
+```
+
 ## Commit Style
 
 - lowercase
