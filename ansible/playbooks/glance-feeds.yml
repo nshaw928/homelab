@@ -3,6 +3,8 @@
   hosts: localhost
   connection: local
   gather_facts: false
+  environment:
+    KUBECONFIG: "{{ playbook_dir }}/../kubeconfig.yaml"
 
   tasks:
     - name: Create glance-feeds configmap
