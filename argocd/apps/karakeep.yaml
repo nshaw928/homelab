@@ -31,6 +31,12 @@ spec:
             accessMode: ReadWriteOnce
             size: 2Gi
 
+        secrets:
+          karakeep:
+            enabled: false
+          meilesearch:
+            enabled: false
+
         controllers:
           karakeep:
             containers:
@@ -40,6 +46,12 @@ spec:
                   INFERENCE_TEXT_MODEL: "gemma3:4b"
                   INFERENCE_IMAGE_MODEL: "llava"
                   INFERENCE_OUTPUT_SCHEMA: "plain"
+          chrome:
+            pod:
+              dnsConfig:
+                options:
+                  - name: ndots
+                    value: "1"
 
         meilisearch:
           persistence:
