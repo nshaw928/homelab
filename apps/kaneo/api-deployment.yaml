@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kaneo-api
+  namespace: kaneo
+  labels:
+    app.kubernetes.io/name: kaneo-api
+    app.kubernetes.io/component: api
+spec:
+  revisionHistoryLimit: 3
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kaneo-api
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: kaneo-api
+        app.kubernetes.io/component: api
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
+      containers:
+        - name: api
+          image: ghcr.io/usekaneo/api:latest
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 1337
+              protocol: TCP
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kaneo-secrets
+                  key: POSTGRES_PASSWORD
+            - name: AUTH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: kaneo-secrets
+                  key: AUTH_SECRET
+            - name: DATABASE_URL
+              value: "postgresql://kaneo:$(POSTGRES_PASSWORD)@kaneo-postgres:5432/kaneo"
+            - name: KANEO_API_URL
+              value: "https://kaneo.nicholasshaw.cloud"
+            - name: KANEO_CLIENT_URL
+              value: "https://kaneo.nicholasshaw.cloud"
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            initialDelaySeconds: 60
+            periodSeconds: 30
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5

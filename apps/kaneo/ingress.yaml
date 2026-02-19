@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kaneo
+  namespace: kaneo
+  labels:
+    app.kubernetes.io/name: kaneo
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.middlewares: kube-system-security-headers@kubernetescrd,kube-system-rate-limit@kubernetescrd
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - kaneo.nicholasshaw.cloud
+  rules:
+    - host: kaneo.nicholasshaw.cloud
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: kaneo-api
+                port:
+                  number: 1337
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kaneo-web
+                port:
+                  number: 5173
