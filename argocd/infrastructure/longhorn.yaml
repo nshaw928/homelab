@@ -3,8 +3,7 @@ kind: Application
 metadata:
   name: longhorn
   namespace: argocd
-  annotations:
-    argocd.argoproj.io/compare-options: ServerSideDiff=true
+  annotations: {}
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
