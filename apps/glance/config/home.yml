@@ -30,6 +30,9 @@
               - title: Kaneo
                 url: https://kaneo.nicholasshaw.cloud
                 icon: sh:kaneo
+              - title: Immich
+                url: https://immich.nicholasshaw.cloud
+                icon: sh:immich
 
           - $include: bookmarks.yml
 
