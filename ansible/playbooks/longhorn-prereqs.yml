@@ -30,3 +30,22 @@
         path: /etc/modules-load.d/longhorn.conf
         line: iscsi_tcp
         create: yes
+
+    - name: Blacklist Longhorn devices in multipathd
+      copy:
+        dest: /etc/multipath.conf
+        content: |
+          defaults {
+              user_friendly_names yes
+          }
+          blacklist {
+              devnode "^sd[a-z0-9]+"
+              devnode "^longhorn"
+          }
+      notify: Restart multipathd
+
+  handlers:
+    - name: Restart multipathd
+      systemd:
+        name: multipathd
+        state: restarted
