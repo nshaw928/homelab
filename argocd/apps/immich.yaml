@@ -38,19 +38,22 @@ spec:
                 - hosts:
                     - immich.nicholasshaw.cloud
 
-        env:
-          DB_HOSTNAME: immich-postgres
-          DB_PORT: "5432"
-          DB_USERNAME: immich
-          DB_DATABASE_NAME: immich
-          DB_PASSWORD:
-            valueFrom:
-              secretKeyRef:
-                name: immich-secrets
-                key: DB_PASSWORD
-
-        image:
-          tag: v2.5.6
+        controllers:
+          main:
+            containers:
+              main:
+                image:
+                  tag: v2.5.6
+                env:
+                  DB_HOSTNAME: immich-postgres
+                  DB_PORT: "5432"
+                  DB_USERNAME: immich
+                  DB_DATABASE_NAME: immich
+                  DB_PASSWORD:
+                    valueFrom:
+                      secretKeyRef:
+                        name: immich-secrets
+                        key: DB_PASSWORD
 
         machine-learning:
           enabled: true
