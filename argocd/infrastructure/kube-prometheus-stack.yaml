@@ -21,6 +21,12 @@ spec:
             existingSecret: grafana-admin-secret
             userKey: admin-user
             passwordKey: admin-password
+          grafana.ini:
+            security:
+              allow_embedding: true
+            auth.anonymous:
+              enabled: true
+              org_role: Viewer
           persistence:
             enabled: true
             storageClassName: longhorn
@@ -42,7 +48,7 @@ spec:
             annotations:
               traefik.ingress.kubernetes.io/router.entrypoints: websecure
               traefik.ingress.kubernetes.io/router.tls: "true"
-              traefik.ingress.kubernetes.io/router.middlewares: kube-system-security-headers@kubernetescrd,kube-system-rate-limit@kubernetescrd
+              traefik.ingress.kubernetes.io/router.middlewares: kube-system-grafana-security-headers@kubernetescrd,kube-system-rate-limit@kubernetescrd
 
         # Prometheus configuration
         prometheus:

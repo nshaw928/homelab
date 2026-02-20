@@ -8,3 +8,4 @@ theme:
 pages:
   - $include: home.yml
   - $include: media.yml
+  - $include: homelab.yml

@@ -1,0 +1,65 @@
+  - name: Homelab
+    slug: homelab
+    columns:
+      - size: small
+        widgets:
+          - type: custom-api
+            title: CPU Usage
+            cache: 1m
+            url: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090/api/v1/query?query=100 - (avg by(instance)(irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
+            template: |
+              {{ range .JSON.data.result }}
+              {{ .metric.instance }}: {{ .value | last | toFloat | printf "%.1f" }}%
+              {{ end }}
+
+          - type: custom-api
+            title: Memory Usage
+            cache: 1m
+            url: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090/api/v1/query?query=(1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100
+            template: |
+              {{ range .JSON.data.result }}
+              {{ .metric.instance }}: {{ .value | last | toFloat | printf "%.1f" }}%
+              {{ end }}
+
+          - type: custom-api
+            title: Disk Usage
+            cache: 5m
+            url: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090/api/v1/query?query=100 - (node_filesystem_avail_bytes{mountpoint="/",fstype!="tmpfs"} / node_filesystem_size_bytes{mountpoint="/",fstype!="tmpfs"} * 100)
+            template: |
+              {{ range .JSON.data.result }}
+              {{ .metric.instance }}: {{ .value | last | toFloat | printf "%.1f" }}%
+              {{ end }}
+
+      - size: full
+        widgets:
+          - type: iframe
+            title: CPU Usage Over Time
+            source: https://grafana.nicholasshaw.cloud/d-solo/PLACEHOLDER/node-exporter?orgId=1&panelId=PLACEHOLDER&theme=dark
+            height: 300
+
+          - type: iframe
+            title: Memory Usage Over Time
+            source: https://grafana.nicholasshaw.cloud/d-solo/PLACEHOLDER/node-exporter?orgId=1&panelId=PLACEHOLDER&theme=dark
+            height: 300
+
+          - type: releases
+            title: Infrastructure Releases
+            repositories:
+              - k3s-io/k3s
+              - longhorn/longhorn
+              - argoproj/argo-cd
+              - glanceapp/glance
+              - cert-manager/cert-manager
+              - bitnami-labs/sealed-secrets
+            collapse-after: 6
+
+          - type: repository
+            title: Homelab
+            repository: nshaw928/homelab
+            pull-requests-limit: 3
+            issues-limit: 3
+            commits-limit: 5
+
+      - size: small
+        widgets:
+          - $include: reddit.yml
