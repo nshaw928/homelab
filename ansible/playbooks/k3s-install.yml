@@ -6,14 +6,29 @@
       apt:
         update_cache: yes
         cache_valid_time: 3600
+      when: ansible_os_family == 'Debian'
 
-    - name: Install required packages
+    - name: Update pacman cache
+      pacman:
+        update_cache: yes
+      when: ansible_os_family == 'Archlinux'
+
+    - name: Install required packages (Debian)
       apt:
         name:
           - curl
           - apt-transport-https
           - ca-certificates
         state: present
+      when: ansible_os_family == 'Debian'
+
+    - name: Install required packages (Arch)
+      pacman:
+        name:
+          - curl
+          - ca-certificates
+        state: present
+      when: ansible_os_family == 'Archlinux'
 
     - name: Disable swap (Kubernetes requirement)
       command: swapoff -a

@@ -6,13 +6,28 @@
       apt:
         update_cache: yes
         cache_valid_time: 3600
+      when: ansible_os_family == 'Debian'
 
-    - name: Install Longhorn dependencies
+    - name: Update pacman cache
+      pacman:
+        update_cache: yes
+      when: ansible_os_family == 'Archlinux'
+
+    - name: Install Longhorn dependencies (Debian)
       apt:
         name:
           - open-iscsi
           - nfs-common
         state: present
+      when: ansible_os_family == 'Debian'
+
+    - name: Install Longhorn dependencies (Arch)
+      pacman:
+        name:
+          - open-iscsi
+          - nfs-utils
+        state: present
+      when: ansible_os_family == 'Archlinux'
 
     - name: Enable and start iscsid service
       systemd:
