@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: temporal-elasticsearch
+  namespace: postiz
+  labels:
+    app.kubernetes.io/name: temporal-elasticsearch
+    app.kubernetes.io/component: search
+spec:
+  type: ClusterIP
+  ports:
+    - port: 9200
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: temporal-elasticsearch

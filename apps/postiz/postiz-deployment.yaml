@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postiz
+  namespace: postiz
+  labels:
+    app.kubernetes.io/name: postiz
+    app.kubernetes.io/component: app
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  revisionHistoryLimit: 3
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: postiz
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: postiz
+        app.kubernetes.io/component: app
+    spec:
+      containers:
+        - name: postiz
+          image: ghcr.io/gitroomhq/postiz-app:v2.18.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 5000
+              protocol: TCP
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postiz-secrets
+                  key: POSTGRES_PASSWORD
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: postiz-secrets
+                  key: JWT_SECRET
+            - name: DATABASE_URL
+              value: "postgresql://postiz:$(POSTGRES_PASSWORD)@postiz-postgres:5432/postiz"
+            - name: REDIS_URL
+              value: "redis://postiz-redis:6379"
+            - name: FRONTEND_URL
+              value: "https://postiz.nicholasshaw.cloud"
+            - name: MAIN_URL
+              value: "https://postiz.nicholasshaw.cloud"
+            - name: NEXT_PUBLIC_BACKEND_URL
+              value: "https://postiz.nicholasshaw.cloud/api"
+            - name: BACKEND_INTERNAL_URL
+              value: "http://localhost:3000"
+            - name: TEMPORAL_ADDRESS
+              value: "temporal:7233"
+            - name: STORAGE_PROVIDER
+              value: "local"
+            - name: UPLOAD_DIRECTORY
+              value: "/uploads"
+          volumeMounts:
+            - name: uploads
+              mountPath: /uploads
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "200m"
+            limits:
+              memory: "2Gi"
+              cpu: "2000m"
+          startupProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 30
+            timeoutSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 30
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+      volumes:
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: postiz-uploads
