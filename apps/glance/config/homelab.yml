@@ -8,8 +8,8 @@
             cache: 1m
             url: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090/api/v1/query?query=100 - (avg by(instance)(irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)
             template: |
-              {{ range .JSON.data.result }}
-              {{ .metric.instance }}: {{ .value | last | toFloat | printf "%.1f" }}%
+              {{ range .JSON.Array "data.result" }}
+              {{ .String "metric.instance" }}: {{ .Float "value.1" | printf "%.1f" }}%
               {{ end }}
 
           - type: custom-api
@@ -17,8 +17,8 @@
             cache: 1m
             url: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090/api/v1/query?query=(1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100
             template: |
-              {{ range .JSON.data.result }}
-              {{ .metric.instance }}: {{ .value | last | toFloat | printf "%.1f" }}%
+              {{ range .JSON.Array "data.result" }}
+              {{ .String "metric.instance" }}: {{ .Float "value.1" | printf "%.1f" }}%
               {{ end }}
 
           - type: custom-api
@@ -26,8 +26,8 @@
             cache: 5m
             url: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090/api/v1/query?query=100 - (node_filesystem_avail_bytes{mountpoint="/",fstype!="tmpfs"} / node_filesystem_size_bytes{mountpoint="/",fstype!="tmpfs"} * 100)
             template: |
-              {{ range .JSON.data.result }}
-              {{ .metric.instance }}: {{ .value | last | toFloat | printf "%.1f" }}%
+              {{ range .JSON.Array "data.result" }}
+              {{ .String "metric.instance" }}: {{ .Float "value.1" | printf "%.1f" }}%
               {{ end }}
 
       - size: full
