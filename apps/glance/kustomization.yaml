@@ -15,11 +15,6 @@ configMapGenerator:
       - config/home.yml
       - config/media.yml
       - config/homelab.yml
-  - name: glance-feeds
-    files:
-      - config/bookmarks.yml
-      - config/feeds/rss.yml
-      - config/feeds/reddit.yml
 
 generatorOptions:
   disableNameSuffixHash: true
