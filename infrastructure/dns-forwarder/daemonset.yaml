@@ -18,6 +18,15 @@ spec:
       dnsPolicy: Default
       tolerations:
       - operator: Exists
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: dns-forwarder
+                operator: NotIn
+                values:
+                - skip
       containers:
       - name: coredns
         image: rancher/mirrored-coredns-coredns:1.13.1

@@ -64,3 +64,4 @@
       systemd:
         name: multipathd
         state: restarted
+      failed_when: false
