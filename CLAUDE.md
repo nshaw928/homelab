@@ -319,6 +319,60 @@ kubectl create job --from=cronjob/renovate renovate-manual -n renovate
 kubectl logs -n renovate job/renovate-<timestamp>
 ```
 
+## Git Hosting with Gitea
+
+Self-hosted Gitea instance is the primary git remote for ArgoCD and Renovate.
+
+- Web UI: `https://gitea.nicholasshaw.cloud` (requires Netbird VPN)
+- SSH: `10.99.99.29:22` (MetalLB LoadBalancer, separate from Traefik)
+- Repository: `nick/homelab`
+- Helm values: `infrastructure/gitea/values.yaml`
+- ArgoCD Application: `argocd/infrastructure/gitea.yaml`
+
+### SSH Access
+
+Add to `~/.ssh/config`:
+```
+Host gitea.nicholasshaw.cloud
+  HostName 10.99.99.29
+  Port 22
+  User git
+```
+
+### Bootstrap / Recovery
+
+Gitea is managed by ArgoCD, but if Gitea is down and ArgoCD can't sync:
+
+```bash
+ansible-playbook ansible/playbooks/gitea.yml
+```
+
+Or manually:
+```bash
+helm repo add gitea https://dl.gitea.com/charts/
+helm install gitea gitea/gitea -n gitea --values infrastructure/gitea/values.yaml
+```
+
+PVCs persist across reinstalls — data is safe.
+
+### Sealed Secret
+
+Admin credentials are in `infrastructure/gitea/sealed-secret.yaml`. To re-seal:
+
+```bash
+GITEA_ADMIN_PASSWORD=$(openssl rand -base64 24)
+kubectl create secret generic gitea-admin-secret \
+  --namespace gitea \
+  --from-literal=username=nick \
+  --from-literal=password="$GITEA_ADMIN_PASSWORD" \
+  --from-literal=email="nick@nicholasshaw.cloud" \
+  --dry-run=client -o yaml | \
+kubeseal \
+  --controller-name=sealed-secrets-controller \
+  --controller-namespace=kube-system \
+  --format yaml > infrastructure/gitea/sealed-secret.yaml
+```
+
 ## Commit Style
 
 - lowercase

@@ -1,6 +1,8 @@
 # Secrets - never commit
 ansible/inventory/hosts.yml
 ansible/kubeconfig.yaml
+/gitea
+/gitea.pub
 
 # Glance private feeds
 apps/glance/config/feeds/reddit.yml

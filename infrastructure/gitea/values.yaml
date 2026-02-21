@@ -1,0 +1,84 @@
+image:
+  rootless: true
+
+service:
+  http:
+    type: ClusterIP
+    port: 3000
+  ssh:
+    type: LoadBalancer
+    port: 22
+    loadBalancerIP: "10.99.99.29"
+
+ingress:
+  enabled: true
+  className: traefik
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.middlewares: kube-system-security-headers@kubernetescrd,kube-system-rate-limit@kubernetescrd
+  hosts:
+    - host: gitea.nicholasshaw.cloud
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - hosts:
+        - gitea.nicholasshaw.cloud
+
+persistence:
+  enabled: true
+  storageClass: longhorn
+  size: 10Gi
+
+dnsConfig:
+  options:
+    - name: ndots
+      value: "1"
+
+gitea:
+  admin:
+    existingSecret: gitea-admin-secret
+  config:
+    server:
+      DOMAIN: gitea.nicholasshaw.cloud
+      ROOT_URL: https://gitea.nicholasshaw.cloud/
+      SSH_DOMAIN: gitea.nicholasshaw.cloud
+      SSH_PORT: 22
+      SSH_LISTEN_PORT: 2222
+    service:
+      DISABLE_REGISTRATION: true
+    repository:
+      DEFAULT_BRANCH: main
+    webhook:
+      ALLOWED_HOST_LIST: "*"
+
+postgresql-ha:
+  enabled: false
+
+postgresql:
+  enabled: true
+  global:
+    postgresql:
+      auth:
+        password: gitea
+        database: gitea
+        username: gitea
+  primary:
+    persistence:
+      storageClass: longhorn
+      size: 5Gi
+
+valkey-cluster:
+  enabled: false
+
+valkey:
+  enabled: true
+  architecture: standalone
+  global:
+    valkey:
+      password: gitea
+  primary:
+    persistence:
+      storageClass: longhorn
+      size: 1Gi

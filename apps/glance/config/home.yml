@@ -53,6 +53,9 @@
               - title: Grafana
                 url: https://grafana.nicholasshaw.cloud
                 icon: sh:grafana
+              - title: Gitea
+                url: https://gitea.nicholasshaw.cloud
+                icon: sh:gitea
               - title: Obsidian Live Sync
                 url: https://obsidian-livesync.nicholasshaw.cloud
                 icon: sh:obsidian

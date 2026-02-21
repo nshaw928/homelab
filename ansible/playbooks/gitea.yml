@@ -1,0 +1,97 @@
+---
+- name: Deploy Gitea on Kubernetes
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  environment:
+    KUBECONFIG: "{{ playbook_dir }}/../kubeconfig.yaml"
+
+  tasks:
+    - name: Apply expanded MetalLB IP pool config
+      kubernetes.core.k8s:
+        state: present
+        src: "{{ playbook_dir }}/../../infrastructure/metallb/metallb-config.yaml"
+
+    - name: Create gitea namespace
+      kubernetes.core.k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: gitea
+
+    - name: Apply sealed secret for admin credentials
+      kubernetes.core.k8s:
+        state: present
+        src: "{{ playbook_dir }}/../../infrastructure/gitea/sealed-secret.yaml"
+
+    - name: Wait for sealed secret to be unsealed
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Secret
+        namespace: gitea
+        name: gitea-admin-secret
+      register: admin_secret
+      until: admin_secret.resources | length > 0
+      retries: 30
+      delay: 5
+
+    - name: Add Gitea Helm repo
+      kubernetes.core.helm_repository:
+        name: gitea
+        repo_url: https://dl.gitea.com/charts/
+
+    - name: Install Gitea Helm chart
+      kubernetes.core.helm:
+        name: gitea
+        chart_ref: gitea/gitea
+        chart_version: "12.5.0"
+        release_namespace: gitea
+        create_namespace: true
+        values_files:
+          - "{{ playbook_dir }}/../../infrastructure/gitea/values.yaml"
+        wait: true
+        wait_timeout: 600s
+
+    - name: Wait for Gitea pods to be ready
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Pod
+        namespace: gitea
+        label_selectors:
+          - app.kubernetes.io/name=gitea
+      register: gitea_pods
+      until: >
+        gitea_pods.resources | length > 0 and
+        (gitea_pods.resources | selectattr('status.phase', 'equalto', 'Running') | list | length) == (gitea_pods.resources | length)
+      retries: 30
+      delay: 10
+
+    - name: Wait for SSH LoadBalancer external IP
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Service
+        namespace: gitea
+        name: gitea-ssh
+      register: ssh_svc
+      until: >
+        ssh_svc.resources | length > 0 and
+        ssh_svc.resources[0].status.loadBalancer.ingress is defined and
+        ssh_svc.resources[0].status.loadBalancer.ingress | length > 0
+      retries: 30
+      delay: 10
+
+    - name: Show deployment info
+      debug:
+        msg:
+          - "Gitea is ready!"
+          - "Web UI: https://gitea.nicholasshaw.cloud"
+          - "SSH IP: {{ ssh_svc.resources[0].status.loadBalancer.ingress[0].ip }}"
+          - ""
+          - "Next steps:"
+          - "  1. Log in with admin credentials"
+          - "  2. Create 'homelab' repo"
+          - "  3. Add SSH key to your Gitea profile"
+          - "  4. git remote add gitea git@gitea.nicholasshaw.cloud:nick/homelab.git"
+          - "  5. git push gitea --all --tags"

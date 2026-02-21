@@ -18,8 +18,9 @@ spec:
         renovate:
           config: |
             {
-              "platform": "github",
-              "repositories": ["nshaw928/homelab"]
+              "platform": "gitea",
+              "endpoint": "https://gitea.nicholasshaw.cloud/api/v1",
+              "repositories": ["nick/homelab"]
             }
         envFrom:
           - secretRef:

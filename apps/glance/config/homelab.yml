@@ -51,14 +51,17 @@
               - glanceapp/glance
               - cert-manager/cert-manager
               - bitnami-labs/sealed-secrets
+              - go-gitea/gitea
             collapse-after: 6
 
-          - type: repository
-            title: Homelab
-            repository: nshaw928/homelab
-            pull-requests-limit: 3
-            issues-limit: 3
-            commits-limit: 5
+          - type: custom-api
+            title: Recent Commits
+            cache: 5m
+            url: https://gitea.nicholasshaw.cloud/api/v1/repos/nick/homelab/commits?limit=5
+            template: |
+              {{ range .JSON.Array "" }}
+              {{ .String "commit.message" | split "\n" | first }} - {{ .String "commit.author.name" }}
+              {{ end }}
 
       - size: small
         widgets:
