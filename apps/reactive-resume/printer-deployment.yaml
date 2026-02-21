@@ -24,7 +24,7 @@ spec:
         fsGroup: 999
       containers:
         - name: printer
-          image: ghcr.io/browserless/chromium:v2.23.0
+          image: ghcr.io/browserless/chromium:v2.41.0
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
