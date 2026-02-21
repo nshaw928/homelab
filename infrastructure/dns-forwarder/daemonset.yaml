@@ -29,7 +29,7 @@ spec:
                 - skip
       containers:
       - name: coredns
-        image: rancher/mirrored-coredns-coredns:1.13.1
+        image: rancher/mirrored-coredns-coredns:1.14.1
         args: ["-conf", "/etc/coredns/Corefile"]
         securityContext:
           allowPrivilegeEscalation: false
